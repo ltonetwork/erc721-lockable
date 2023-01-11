@@ -7,14 +7,13 @@
     "test": "scripts/test.sh",
     "migrate": "truffle migrate --compile-all --network mainnet",
     "migrate:dev": "truffle migrate --compile-all --network development",
-    "migrate:rinkeby": "truffle migrate --compile-all --network rinkeby",
-    "migrate:kovan": "truffle migrate --compile-all --network kovan",
-    "verify": "truffle run verify --network mainnet",
-    "verify:rinkeby": "truffle run verify --network rinkeby",
-    "verify:kovan": "truffle run verify --network kovan",
-    "deploy": "npm run migrate && npm run verify"
+    "migrate:goerli": "truffle migrate --compile-all --network goerli",
+    "verify": "truffle run verify LockableNFT --network mainnet",
+    "verify:goerli": "truffle run verify LockableNFT --network goerli",
+    "deploy": "npm run migrate && npm run verify",
+    "deploy:goerli": "npm run migrate:goerli && npm run verify:goerli"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.0"
   },

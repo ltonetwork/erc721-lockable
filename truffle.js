@@ -22,26 +22,16 @@ module.exports = {
             },
             network_id: 1
         },
-        rinkeby: {
+        goerli: {
             provider: function() {
                 return new HDWalletProvider(
                     process.env.MNEMONIC,
-                    `https://rinkeby.infura.io/v3/${process.env.INFURA_ID}`
+                    `https://goerli.infura.io/v3/${process.env.INFURA_ID}`
                 )
             },
-            network_id: 4
-        },
-        kovan: {
-            provider: function() {
-                return new HDWalletProvider(
-                    process.env.MNEMONIC,
-                    `https://kovan.infura.io/v3/${process.env.INFURA_ID}`
-                )
-            },
-            network_id: 42
+            network_id: 5
         }
     },
-
     compilers: {
         solc: {
             version: "0.8.10",
