@@ -2,25 +2,18 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "./Verify.sol";
 import "./IERC721Lockable.sol";
+import "./ERC721Lockable.sol";
 
-contract LockableNFT is ERC721, Ownable, IERC721Lockable {
+contract LockableNFT is ERC721Lockable, Ownable {
     using Counters for Counters.Counter;
-    using Verify for mapping(address => bool);
 
     Counters.Counter private tokenIds;
-    mapping(uint256 => bytes32) private lockedTokens;
     string private baseURI;
-    mapping(address => bool) private authorities;
 
-    constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) { }
-
-    modifier onlyHolder(uint256 tokenId) {
-        require(ownerOf(tokenId) == msg.sender, "caller is not the token holder");
-        _;
+    constructor(string memory _name, string memory _symbol, address _authority) ERC721(_name, _symbol) {
+        _addAuthority(_authority);
     }
 
     function mint(bool locked) external returns (uint256) {
@@ -45,52 +38,11 @@ contract LockableNFT is ERC721, Ownable, IERC721Lockable {
     }
 
 
-    function lock(uint256 tokenId) external onlyHolder(tokenId) {
-        require(!_isLocked(tokenId), "token already locked");
-        _lock(tokenId);
+    function addAuthority(address account) external onlyOwner {
+        _addAuthority(account);
     }
 
-    function _lock(uint256 tokenId) internal {
-        bytes32 challenge = keccak256(abi.encodePacked(blockhash(block.number), tokenId));
-
-        lockedTokens[tokenId] = challenge;
-        emit Lock(tokenId, challenge);
-    }
-
-    function unlock(uint256 tokenId, bytes memory proof) external onlyHolder(tokenId) {
-        require(_isLocked(tokenId), "token not locked");
-        require(authorities.verify(lockedTokens[tokenId], proof), "unlock verification failed");
-
-        delete lockedTokens[tokenId];
-        emit Unlock(tokenId);
-    }
-
-    function unlockChallenge(uint256 tokenId) external view returns (bytes32) {
-        require(_isLocked(tokenId), "token not locked");
-        return lockedTokens[tokenId];
-    }
-
-    function isLocked(uint256 tokenId) external view returns (bool) {
-        ownerOf(tokenId); // Assert that the token exists
-        return _isLocked(tokenId);
-    }
-
-    function _isLocked(uint256 tokenId) internal view returns (bool) {
-        return lockedTokens[tokenId] != bytes32(0);
-    }
-
-
-    function addAuthority(address account) public onlyOwner {
-        require(!authorities[account], "address is already an authority");
-        authorities[account] = true;
-    }
-
-    function removeAuthority(address account) public onlyOwner {
-        require(authorities[account], "address is not an authority");
-        delete authorities[account];
-    }
-
-    function isAuthority(address account) external view returns (bool) {
-        return authorities[account];
+    function removeAuthority(address account) external onlyOwner {
+        _removeAuthority(account);
     }
 }

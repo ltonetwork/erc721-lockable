@@ -1,6 +1,7 @@
 {
   "default": {
     "name": "Test",
-    "symbol": "TEST"
+    "symbol": "TEST",
+    "bridgeAddress": "0x0"
   }
 }

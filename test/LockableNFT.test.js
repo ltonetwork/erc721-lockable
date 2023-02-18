@@ -15,13 +15,9 @@ contract(
         let authority;
 
         before(async () => {
-            nft = await LockableNFT.new("Test", "TEST");
-        });
-
-        before(async () => {
             authority = await web3.eth.accounts.create();
-            await nft.addAuthority(authority.address);
-        })
+            nft = await LockableNFT.new("Test", "TEST", authority.address);
+        });
 
         describe("add authority", () => {
             it("will add an authority", async () => {
