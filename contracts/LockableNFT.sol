@@ -5,29 +5,25 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./Verify.sol";
+import "./IERC721Lockable.sol";
 
-contract LockableNFT is ERC721, Ownable {
+contract LockableNFT is ERC721, Ownable, IERC721Lockable {
     using Counters for Counters.Counter;
     using Verify for mapping(address => bool);
 
     Counters.Counter private tokenIds;
-
     mapping(uint256 => bytes32) private lockedTokens;
     string private baseURI;
-
     mapping(address => bool) private authorities;
 
     constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) { }
-
-    event Lock(uint256 indexed tokenId, bytes32 challenge);
-    event Unlock(uint256 indexed tokenId);
 
     modifier onlyHolder(uint256 tokenId) {
         require(ownerOf(tokenId) == msg.sender, "caller is not the token holder");
         _;
     }
 
-    function mint(bool locked) public returns (uint256) {
+    function mint(bool locked) external returns (uint256) {
         tokenIds.increment();
         uint256 id = tokenIds.current();
 
@@ -40,7 +36,7 @@ contract LockableNFT is ERC721, Ownable {
         return id;
     }
 
-    function setBaseURI(string calldata _uri) public onlyOwner {
+    function setBaseURI(string calldata _uri) external onlyOwner {
         baseURI = _uri;
     }
 
@@ -49,7 +45,7 @@ contract LockableNFT is ERC721, Ownable {
     }
 
 
-    function lock(uint256 tokenId) public onlyHolder(tokenId) {
+    function lock(uint256 tokenId) external onlyHolder(tokenId) {
         require(!_isLocked(tokenId), "token already locked");
         _lock(tokenId);
     }
@@ -61,7 +57,7 @@ contract LockableNFT is ERC721, Ownable {
         emit Lock(tokenId, challenge);
     }
 
-    function unlock(uint256 tokenId, bytes memory proof) public onlyHolder(tokenId) {
+    function unlock(uint256 tokenId, bytes memory proof) external onlyHolder(tokenId) {
         require(_isLocked(tokenId), "token not locked");
         require(authorities.verify(lockedTokens[tokenId], proof), "unlock verification failed");
 
