@@ -74,10 +74,8 @@ $ npm run migrate:dev
 
 ### Goerli
 
-Deploy the smart contract on the [Goerli](https://goerli.etherscan.io/) Ethereum testnet. Make sure your wallet has enough ETH
-to pay for the GAS.
-
-**[ChainLink Faucet](https://faucets.chain.link/)**
+Deploy the smart contract on the [Goerli](https://goerli.etherscan.io/) Ethereum testnet. Make sure your wallet has enough
+tesnet ETH to pay for the GAS. You can obtain ETH for Goerli through a faucet.
 
 ```bash
 $ npm run migrate:rinkeby
