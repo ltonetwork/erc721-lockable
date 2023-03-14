@@ -1,8 +1,16 @@
-# Ownable NFT
+# ERC721 Lockable NFT
+
+`ERC721Lockable` provides a lock mechanism for NFT smart contracts. Only the owner of an NFT can lock it. Unlocking the NFT is done also done by the owner, but requires approval by an authority. The unlock function checks whether the signature provided in the unlock request corresponds to an authorized authority address.
+
+`LockService` can be used by an existing NFT project to provide a similar function. The lock service requires approval for the NFT. To lock the NFT, it is transfered to the lock service. The original owner can unlock providing with a signature of an authority, which will return the NFT to them.
+
+### Ownables
+
+Lockable NFTs can be used in combination with [LTO Ownables](https://docs.ltonetwork.com/ownables). The Ownable is provided as unlockable content for the NFT. At any time, either the NFT or the Ownable is locked. When the NFT is unlocked and tradable, the Ownable needs to be in the locked state and uploaded to an Ownable bridge. When the Ownable is unlocked in the owner's wallet, the NFT needs to be locked to ensure a new owner will always get the most up-to-date version of the Ownable.
 
 ### Review by ChatGPT
 
-> Sure, here's a review of the Verify library, ERC721Lockable, and LockableNFT contracts:
+> Here's a review of the Verify library, ERC721Lockable, and LockableNFT contracts:
 >
 > #### Verify library:
 > The Verify library provides two functions for signature verification. The first function recovers an Ethereum address from a signed message hash and signature, while the second function verifies whether a given address is authorized to perform an action based on the provided signature. The code looks correct and there don't seem to be any security vulnerabilities.
