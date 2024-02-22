@@ -32,30 +32,29 @@ Install dependencies
 $ npm install
 ```
 
-You could also choose to install Truffle and Ganache globally:
-
-```bash
-$ npm install -g truffle truffle-plugin-verify ganache-cli @openzeppelin/contracts
-```
-
-**Note:**
-
-if you install truffle and ganache globally, all the project's dependencies (such as `@openzeppelin/contracts`) will also need to be installed globally, otherwise `truffle verify` won't work properly.
-
 ## Run tests
 
 ```bash
-$ npm test
+$ npm run test
 ```
 
 ## Configuration
 
-Create a `.env` file (look at `.env.example` for reference) or set environment variables:
+Create a `.env` file (look at `.env.example` for reference) or set environment variables that you need for your specific case
 
 ```bash
-MNEMONIC="..."
-INFURA_ID="..."
-ETHERSCAN_API_KEY="..."
+ETHERSCAN_API_KEY=
+ARBISCAN_API_KEY=
+POLYGONSCAN_API_KEY=
+ETH_MAINNET_ALCHEMY_API_KEY=
+ETH_SEPOLIA_ALCHEMY_API_KEY=
+ARBITRUM_MAINNET_ALCHEMY_API_KEY=
+ARBITRUM_SEPOLIA_ALCHEMY_API_KEY=
+POLYGON_MAINNET_ALCHEMY_API_KEY=
+POLYGON_MUMBAI_ALCHEMY_API_KEY=
+TESTNET_MNEMONIC = ''
+MAINNET_MNEMONIC = ''
+COINMARKETCAP_API_KEY=
 ```
 
 - Deployment to rinkeby is done via [Infura](https://infura.io/).

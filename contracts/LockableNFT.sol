@@ -3,46 +3,53 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "./IERC721Lockable.sol";
+
+// import "./IERC721Lockable.sol";
 import "./ERC721Lockable.sol";
 
 contract LockableNFT is ERC721Lockable, Ownable {
     using Counters for Counters.Counter;
 
     Counters.Counter private tokenIds;
-    string private baseURI;
+    mapping(uint256 => string) tokenURIs;
 
-    constructor(string memory _name, string memory _symbol, address _authority) ERC721(_name, _symbol) {
-        _addAuthority(_authority);
+    constructor(string memory _name, string memory _symbol, address _authority, string memory _authorityBaseURI) ERC721(_name, _symbol) {
+        _addAuthority(_authority, _authorityBaseURI);
+        
     }
 
-    function mint(bool locked) external returns (uint256) {
-        tokenIds.increment();
+    function mint(address _to, bool _locked, string memory _tokenURI) external onlyOwner {
+        tokenIds.increment(); // NFT IDs start with 1
         uint256 id = tokenIds.current();
 
-        _safeMint(msg.sender, id);
+        _safeMint(_to, id);
 
-        if (locked) {
+        if (_locked) {
             _lock(id);
         }
-
-        return id;
+        tokenURIs[id] = _tokenURI;
+        emit Mint(id, _to, _locked, _tokenURI);
     }
 
-    function setBaseURI(string calldata _uri) external onlyOwner {
-        baseURI = _uri;
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        return tokenURIs[tokenId];
     }
 
-    function _baseURI() internal view override virtual returns (string memory) {
-        return baseURI;
+    function setTokenURI(uint256 tokenId, string memory _tokenURI) external {
+        require(ownerOf(tokenId) == msg.sender, "caller is not the token holder");
+        tokenURIs[tokenId] = _tokenURI;
     }
 
+    function addAuthority(address _account, string memory _authorityBaseURI) external onlyOwner {
+        _addAuthority(_account,_authorityBaseURI);
 
-    function addAuthority(address account) external onlyOwner {
-        _addAuthority(account);
     }
 
-    function removeAuthority(address account) external onlyOwner {
-        _removeAuthority(account);
+    function removeAuthority(address _account) external onlyOwner {
+        _removeAuthority(_account);
     }
+    function setAuthorityBaseURI(address _account,string calldata _authorityBaseURI) external onlyOwner {
+        _setAuthorityBaseURI(_account, _authorityBaseURI);
+    }
+        
 }

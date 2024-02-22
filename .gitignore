@@ -1,5 +1,18 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# added with migration from Truffle to Hardhat 
+coverage
+coverage.json
+typechain
+typechain-types
+cache
+artifacts
+unknown-31337.json
+bin
+scripts/logs
+docs/logs
+yarn.lock
+
 # compiled output
 /dist
 /build
