@@ -51,5 +51,9 @@ contract LockableNFT is ERC721Lockable, Ownable {
     function setAuthorityBaseURI(address _account,string calldata _authorityBaseURI) external onlyOwner {
         _setAuthorityBaseURI(_account, _authorityBaseURI);
     }
+
+    function getNftCount() external view returns(uint256) {
+        return tokenIds.current();
+    }
         
 }

@@ -23,7 +23,7 @@ async function main() {
   console.log("Network  : ", network.name);
   console.log("Deployer : ", accountDeployer.address);
   console.log("Authority: ", accountAuthority.address); // this needs to be the bridge address
-  console.log("Authority BaseURI: ", accountAuthority.address); // this needs to be the bridge address
+  console.log("Authority BaseURI: ", authorityBaseURI); // this needs to be the bridge baseURI
   console.log("Anyone   : ", accountAnyone.address);
   console.log("NftOwner : ", accountNftOwner.address);
 

@@ -1,7 +1,6 @@
 {
   "default": {
-    "name": "Test",
-    "symbol": "TEST",
-    "bridgeAddress": "0x0"
+    "name": "lockable NFTs",
+    "symbol": "LNFT"
   }
 }
