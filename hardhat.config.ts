@@ -1,17 +1,17 @@
 import * as dotenv from "dotenv";
 import "@typechain/hardhat";
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
+// import "@nomiclabs/hardhat-ethers";
+// import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-etherscan";
 import "solidity-coverage";
 import "hardhat-gas-reporter";
 import "hardhat-abi-exporter";
 import path from "path";
 import "@openzeppelin/hardhat-upgrades";
-import "@openzeppelin/hardhat-defender";
 
 dotenv.config({ path: path.join(__dirname, ".env") });
-
+// import "@nomicfoundation/hardhat-ethers";
+require("@nomicfoundation/hardhat-ethers");
 require("hardhat-contract-sizer");
 require("hardhat-abi-exporter");
 
@@ -42,8 +42,8 @@ export default {
       url: `https://arb-sepolia.g.alchemy.com/v2/${process.env.ARBITRUM_SEPOLIA_ALCHEMY_API_KEY}`,
       accounts: { mnemonic: process.env.TESTNET_MNEMONIC ?? "" },
     },
-    polygonMumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.POLYGON_MUMBAI_ALCHEMY_API_KEY}`,
+    polygonAmoy: {
+      url: `https://polygon-amoy.g.alchemy.com/v2/${process.env.POLYGON_AMOY_ALCHEMY_API_KEY}`,
       accounts: { mnemonic: process.env.TESTNET_MNEMONIC ?? "" },
     },
   },
@@ -79,7 +79,7 @@ export default {
   solidity: {
     compilers: [
       {
-        version: "0.8.19",
+        version: "0.8.20",
         settings: {
           optimizer: {
             enabled: true,
@@ -99,6 +99,6 @@ export default {
     pretty: false,
     clear: true,
     runOnCompile: true,
-    only: ["ERC721Lockable$", "Imports$", "LockableNFT$", "LockService$", "Verify$"],
+    only: ["ERC721Lockable$", "LockableNFT$"],
   },
 };

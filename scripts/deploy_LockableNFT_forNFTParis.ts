@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 import fs from "fs";
 import { ethers, network } from "hardhat";
 
-import "@nomiclabs/hardhat-ethers";
+// import { ethers } from "@nomicfoundation/hardhat-ethers";
 import path from "path";
 
 dotenv.config({ path: path.join(__dirname, ".env") });

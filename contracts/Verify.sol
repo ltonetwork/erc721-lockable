@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 library Verify {
     using ECDSA for bytes32;
+    using MessageHashUtils for bytes32;
 
     function recover(bytes32 hash, bytes memory signature) internal pure returns (address) {
         return hash
