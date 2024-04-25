@@ -4,10 +4,10 @@ pragma solidity ^0.8.20;
 interface ILockable {
     event Lock(uint256 indexed tokenId, bytes32 challenge);
     event Unlock(uint256 indexed tokenId);
+    event UpdateProof(uint256 indexed tokenId, bytes32 challenge);
     event AddAuthority(address indexed account, string _authorityBaseURI);
     event RemoveAuthority(address indexed account);
     event Mint(uint256 indexed id, address indexed _to, bool _locked, string _tokenURI);
-    
     function tokenURI(uint256 tokenId) external view returns (string memory);
     function setTokenURI(uint256 tokenId, string memory _tokenURI) external;
 

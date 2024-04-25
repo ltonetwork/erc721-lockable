@@ -66,14 +66,6 @@ export default {
           browserURL: "https://sepolia.arbiscan.io/",
         },
       },
-      // {
-      //   network: "polygonMumbai",
-      //   chainId: 80001,
-      //   urls: {
-      //     apiURL: "https://api-testnet.polygonscan.com/api",
-      //     browserURL: "https://mumbai.polygonscan.com",
-      //   },
-      // },
     ],
   },
   solidity: {
@@ -99,6 +91,6 @@ export default {
     pretty: false,
     clear: true,
     runOnCompile: true,
-    only: ["ERC721Lockable$", "LockableNFT$"],
+    only: ["ILockable.sol$", "LockableNFT$"],
   },
 };

@@ -64,7 +64,12 @@ contract LockableNFT is ERC721, ILockable, Ownable {
         require(!_isLocked(tokenId), "token already locked");
         _lock(tokenId);
     }
+    function updateProof(uint256 tokenId) external onlyOwner {
+        bytes32 challenge = keccak256(abi.encodePacked(blockhash(block.number), tokenId));
 
+        lockedTokens[tokenId] = challenge;
+        emit UpdateProof(tokenId, challenge);
+    }
     function _lock(uint256 tokenId) internal {
         bytes32 challenge = keccak256(abi.encodePacked(blockhash(block.number), tokenId));
 
