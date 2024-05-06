@@ -14,8 +14,8 @@ interface ILockable {
     function getNftCount() external view returns(uint256);
     function ownerOf(uint256 tokenId) external view returns (address owner);
 
-    function lock(uint256 tokenId) external;    
-    function unlock(uint256 tokenId, bytes memory proof) external;
+    function lock(uint256 tokenId) external payable;    
+    function unlock(uint256 tokenId, bytes memory proof) external payable;
     function unlockChallenge(uint256 tokenId) external view returns (bytes32);
     function isLocked(uint256 tokenId) external view returns (bool);
    

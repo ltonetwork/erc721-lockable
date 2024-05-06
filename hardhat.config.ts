@@ -1,7 +1,5 @@
 import * as dotenv from "dotenv";
 import "@typechain/hardhat";
-// import "@nomiclabs/hardhat-ethers";
-// import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-etherscan";
 import "solidity-coverage";
 import "hardhat-gas-reporter";
@@ -54,7 +52,7 @@ export default {
       arbitrumOne: process.env.ARBISCAN_API_KEY,
       arbitrumTestnet: process.env.ARBISCAN_API_KEY,
       arbitrumSepolia: process.env.ARBISCAN_API_KEY,
-      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
+      // polygonAmoy: process.env.POLYGONSCAN_API_KEY,
       polygon: process.env.POLYGONSCAN_API_KEY,
     },
     customChains: [

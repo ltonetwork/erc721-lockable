@@ -3,20 +3,22 @@
 import * as dotenv from "dotenv";
 import fs from "fs";
 import { ethers, network } from "hardhat";
-import { mine } from "@nomicfoundation/hardhat-network-helpers";
+import { mine, time } from "@nomicfoundation/hardhat-network-helpers";
 // import "@nomiclabs/hardhat-ethers";
 
 import path from "path";
 
 dotenv.config({ path: path.join(__dirname, ".env") });
 
-// Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network hardhat 2>&1 | tee scripts/logs/deploy_LockableNFT_hardhat_20240309.log
-// Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network sepolia 2>&1 | tee scripts/logs/deploy_LockableNFT_sepolia_20240419.log
-// Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network arbitrumSepolia 2>&1 | tee scripts/logs/deploy_LockableNFT_arbitrumSepolia_20240419.log
+// Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network hardhat 2>&1 | tee scripts/logs/deploy_LockableNFT_hardhat_20240504.log
+// Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network sepolia 2>&1 | tee scripts/logs/deploy_LockableNFT_sepolia_20240505.log
+// Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network arbitrumSepolia 2>&1 | tee scripts/logs/deploy_LockableNFT_arbitrumSepolia_20240505.log
 // Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network polygonAmoy 2>&1 | tee scripts/logs/deploy_LockableNFT_polygonAmoy_20240419.log
 
-// https://sepolia.etherscan.io/address/0x0eb02E5382944EA6Bf3B79D3253b68289b5d7078#code
-// https://sepolia.arbiscan.io/address/0x7FE0d2D2665F3581bcb24eeC1c88283e6371af33#code
+
+// Latest:
+// https://sepolia.etherscan.io/address/0xaCAD060e94E34AA6026E531fddd7f3F2B854a7AC#code
+// https://sepolia.arbiscan.io/address/0x50581c978933af5798f5dbE7FDb0f1bdBa10A171#code
 async function main() {
   const signers = await ethers.getSigners();
   const accountDeployer = signers[0];
@@ -59,13 +61,9 @@ async function main() {
     await mine(5);
   } else {
     const currentBlock = await ethers.provider.getBlockNumber();
-    while (currentBlock + 5 > (await ethers.provider.getBlockNumber())) { }
-
+    while (currentBlock + 5 > (await ethers.provider.getBlockNumber())) {}
   }
-  // const test = await deployedContract.waitForDeployment();
-  // await test.deploymentTransaction();
-  // console.log("test", test);
-  // await ethers.provider.waitForTransaction(test.hash, 3);
+
   const contractAddress = await deployedContract.getAddress();
   console.log("LockableNFT contract deployed on network ", network.name, " at address:", contractAddress);
   console.log(
@@ -128,26 +126,40 @@ async function main() {
   console.log("NFT symbol: ", await deployedContract.symbol());
   if (network.name === "hardhat") {
     const unlockChallenge = await deployedContract.unlockChallenge(1);
-    console.log("unlockChallenge", unlockChallenge);
+    console.log("unlockChallenge0", unlockChallenge);
 
     const signature = await accountAuthority.signMessage(ethers.toBeArray(unlockChallenge));
     console.log("signature", signature);
     console.log("owner before unlocking", await deployedContract.ownerOf(1));
-    await deployedContract.connect(accountAnyone).unlock(1, signature);
+    console.log("1Is Unlock Proof valid?", await deployedContract.connect(accountAnyone).isUnlockProofValid(1, signature));
+    // await mine(15, { interval: 15 });
+    // console.log("Latest Block:", await time.latestBlock());
+    await deployedContract.connect(accountDeployer).setUnlockFee("1000000000000000"); // 0.001 ETH
+    await deployedContract.connect(accountDeployer).setLockFee("2000000000000000"); // 0.002 ETH
+
+    await deployedContract.connect(accountAnyone).unlock(1, signature, { value: ethers.parseEther("0.001") });
+
     const locked = await deployedContract.isLocked(1);
     console.log(`Is NFT 1 locked? ${locked}`);
     console.log("owner after unlocking", await deployedContract.ownerOf(1));
+    console.log("2Is Unlock Proof valid?", await deployedContract.connect(accountAnyone).isUnlockProofValid(1, signature));
+
+    await deployedContract.connect(accountAnyone).lock(1, { value: ethers.parseEther("0.002") });
+    console.log("contract Balance:", await ethers.provider.getBalance(deployedContract.getAddress()));
+    console.log("unlockChallenge2", await deployedContract.unlockChallenge(1));
+    const signature2 = await accountAuthority.signMessage(ethers.toBeArray(await deployedContract.unlockChallenge(1)));
+    console.log("3Is Unlock Proof valid?", await deployedContract.connect(accountAnyone).isUnlockProofValid(1, signature));
+    console.log("3Is Unlock Proof valid?", await deployedContract.connect(accountAnyone).isUnlockProofValid(1, signature2));
+
+    console.log("unlockChallenge3", await deployedContract.unlockChallenge(1));
+    await deployedContract.connect(accountDeployer).updateProof(1);
+
+    console.log("unlockChallenge4", await deployedContract.unlockChallenge(1));
+    const signature3 = await accountAuthority.signMessage(ethers.toBeArray(await deployedContract.unlockChallenge(1)));
+    console.log("4Is Unlock Proof valid?", await deployedContract.connect(accountAnyone).isUnlockProofValid(1, signature));
+    console.log("4Is Unlock Proof valid?", await deployedContract.connect(accountAnyone).isUnlockProofValid(1, signature2));
+    console.log("4Is Unlock Proof valid?", await deployedContract.connect(accountAnyone).isUnlockProofValid(1, signature3));
   }
-  // console.log("Removing authority:", await deployedContract.removeAuthority(accountAuthority.address));
-  // console.log("Is Authority ", accountAuthority.address, "?", await deployedContract.isAuthority(accountAuthority.address));
-  // console.log("Base URI of Authority", accountAuthority.address, ":", await deployedContract.getAuthorityBaseURI(accountAuthority.address));
-
-  // console.log("deployedContract", deployedContract);
-  // await deployedContract.connect(accountNftOwner).transferFrom(accountNftOwner.address, accountAnyone.address, 1);
-  // await deployedContract.connect(accountNftOwner).safeTransferFrom(accountNftOwner.address, accountAnyone.address, 2);
-  // console.log("NFT 1 Owner?", await deployedContract.ownerOf(1));
-  // console.log("NFT 2 Owner?", await deployedContract.ownerOf(2));
-
 
   const deploymentFile = `deployments/lockableNFT_${network.name}_${new Date().toISOString()}.json`;
   fs.writeFileSync(
