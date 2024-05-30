@@ -11,14 +11,13 @@ import path from "path";
 dotenv.config({ path: path.join(__dirname, ".env") });
 
 // Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network hardhat 2>&1 | tee scripts/logs/deploy_LockableNFT_hardhat_20240504.log
-// Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network sepolia 2>&1 | tee scripts/logs/deploy_LockableNFT_sepolia_20240505.log
-// Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network arbitrumSepolia 2>&1 | tee scripts/logs/deploy_LockableNFT_arbitrumSepolia_20240505.log
+// Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network sepolia 2>&1 | tee scripts/logs/deploy_LockableNFT_sepolia_20240530.log
+// Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network arbitrumSepolia 2>&1 | tee scripts/logs/deploy_LockableNFT_arbitrumSepolia_20240530.log
 // Example: PARAMETERS=deployments/inputs/deploy_LockableNFT.json npx hardhat run scripts/deploy_LockableNFT.ts --network polygonAmoy 2>&1 | tee scripts/logs/deploy_LockableNFT_polygonAmoy_20240419.log
 
-
 // Latest:
-// https://sepolia.etherscan.io/address/0xaCAD060e94E34AA6026E531fddd7f3F2B854a7AC#code
-// https://sepolia.arbiscan.io/address/0x50581c978933af5798f5dbE7FDb0f1bdBa10A171#code
+// https://sepolia.etherscan.io/address/0x56213ECA28860d8fb5DAF6A8dCdA7bB28d7c360F#code
+// https://sepolia.arbiscan.io/address/0x1527f2f8Cd41b000e1E8F70906012bEFab993AD9#code
 async function main() {
   const signers = await ethers.getSigners();
   const accountDeployer = signers[0];
@@ -61,7 +60,7 @@ async function main() {
     await mine(5);
   } else {
     const currentBlock = await ethers.provider.getBlockNumber();
-    while (currentBlock + 5 > (await ethers.provider.getBlockNumber())) {}
+    while (currentBlock + 5 > (await ethers.provider.getBlockNumber())) { }
   }
 
   const contractAddress = await deployedContract.getAddress();
@@ -140,7 +139,12 @@ async function main() {
     await deployedContract.connect(accountAnyone).unlock(1, signature, { value: ethers.parseEther("0.001") });
 
     const locked = await deployedContract.isLocked(1);
-    console.log(`Is NFT 1 locked? ${locked}`);
+    console.log("NFT 1 is locked?", locked);
+    // try {
+    //   await deployedContract.isLocked(100);
+    // } catch (e) {
+    //   console.log("Expected Error:", e);
+    // }
     console.log("owner after unlocking", await deployedContract.ownerOf(1));
     console.log("2Is Unlock Proof valid?", await deployedContract.connect(accountAnyone).isUnlockProofValid(1, signature));
 

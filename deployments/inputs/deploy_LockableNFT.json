@@ -1,6 +1,6 @@
 {
   "default": {
-    "name": "lockable NFTs",
-    "symbol": "LNFT"
+    "name": "Ownable NFTs",
+    "symbol": "ONFT"
   }
 }
