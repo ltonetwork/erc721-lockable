@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "./LockableNFT.sol";
 import "./libraries/Counters.sol";
 
-contract PublicLockableNFT is LockableNFT {
+contract ExampleLockableNFT is LockableNFT {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 

@@ -10,21 +10,21 @@ import * as Contracts from "./index.js";
 
 declare module "@nomicfoundation/hardhat-ethers/types" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
-  getContractFactory(name: 'ILockable', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.ILockable__factory>
+  getContractFactory(name: 'ExampleLockableNFT', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.ExampleLockableNFT__factory>
+getContractFactory(name: 'ILockable', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.ILockable__factory>
 getContractFactory(name: 'LockableNFT', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.LockableNFT__factory>
-getContractFactory(name: 'PublicLockableNFT', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.PublicLockableNFT__factory>
 
-  getContractAt(name: 'ILockable', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.ILockable>
+  getContractAt(name: 'ExampleLockableNFT', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.ExampleLockableNFT>
+getContractAt(name: 'ILockable', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.ILockable>
 getContractAt(name: 'LockableNFT', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.LockableNFT>
-getContractAt(name: 'PublicLockableNFT', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.PublicLockableNFT>
 
-  deployContract(name: 'ILockable', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.ILockable>
+  deployContract(name: 'ExampleLockableNFT', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.ExampleLockableNFT>
+deployContract(name: 'ILockable', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.ILockable>
 deployContract(name: 'LockableNFT', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.LockableNFT>
-deployContract(name: 'PublicLockableNFT', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.PublicLockableNFT>
 
-  deployContract(name: 'ILockable', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.ILockable>
+  deployContract(name: 'ExampleLockableNFT', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.ExampleLockableNFT>
+deployContract(name: 'ILockable', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.ILockable>
 deployContract(name: 'LockableNFT', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.LockableNFT>
-deployContract(name: 'PublicLockableNFT', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.PublicLockableNFT>
 
     // default types
     getContractFactory(

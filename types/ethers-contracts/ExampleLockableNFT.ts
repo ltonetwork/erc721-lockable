@@ -5,7 +5,7 @@ import type { BaseContract, BigNumberish, BytesLike, FunctionFragment, Result, I
 import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, TypedLogDescription, TypedListener, TypedContractMethod } from "./common.js"
   
 
-  export interface PublicLockableNFTInterface extends Interface {
+  export interface ExampleLockableNFTInterface extends Interface {
     getFunction(nameOrSignature: "addAuthority" | "approve" | "authorities" | "authoritiesBaseURIs" | "authoritiesCounter" | "balanceOf" | "getApproved" | "getAuthorities" | "getAuthorityBaseURI" | "getEther" | "isApprovedForAll" | "isAuthority" | "isLocked" | "isUnlockProofValid" | "lock" | "lockFee" | "lockedTokens" | "mint" | "name" | "owner" | "ownerOf" | "proofNonce" | "registeredAuthorities" | "removeAuthority" | "renounceOwnership" | "safeTransferFrom(address,address,uint256)" | "safeTransferFrom(address,address,uint256,bytes)" | "setApprovalForAll" | "setLockFee" | "setTokenURI" | "setUnlockFee" | "supportsInterface" | "symbol" | "tokenURI" | "tokenURIs" | "transferFrom" | "transferOwnership" | "unlock" | "unlockChallenge" | "unlockFee" | "updateProof"): FunctionFragment;
 
     getEvent(nameOrSignatureOrTopic: "AddAuthority" | "Approval" | "ApprovalForAll" | "Lock" | "Mint" | "OwnershipTransferred" | "RemoveAuthority" | "Transfer" | "Unlock" | "UpdateProof"): EventFragment;
@@ -216,12 +216,12 @@ decodeFunctionResult(functionFragment: 'updateProof', data: BytesLike): Result;
 
   
 
-  export interface PublicLockableNFT extends BaseContract {
+  export interface ExampleLockableNFT extends BaseContract {
     
-    connect(runner?: ContractRunner | null): PublicLockableNFT;
+    connect(runner?: ContractRunner | null): ExampleLockableNFT;
     waitForDeployment(): Promise<this>;
 
-    interface: PublicLockableNFTInterface;
+    interface: ExampleLockableNFTInterface;
 
     
   queryFilter<TCEvent extends TypedContractEvent>(

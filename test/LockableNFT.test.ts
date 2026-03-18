@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import hre from "hardhat";
-import type { PublicLockableNFT } from "../types/ethers-contracts/index.js";
+import type { ExampleLockableNFT } from "../types/ethers-contracts/index.js";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/types";
 import { HDNodeWallet, Wallet, ContractTransactionResponse } from "ethers";
 
@@ -8,7 +8,7 @@ const { ethers } = await hre.network.connect();
 
 async function getEventArgs(
     tx: ContractTransactionResponse,
-    nft: PublicLockableNFT,
+    nft: ExampleLockableNFT,
     eventName: string,
 ) {
     const receipt = await tx.wait();
@@ -22,7 +22,7 @@ async function getEventArgs(
 }
 
 describe("LockableNFT", () => {
-    let nft: PublicLockableNFT;
+    let nft: ExampleLockableNFT;
     let authority: HDNodeWallet;
     let root: HardhatEthersSigner;
     let user1: HardhatEthersSigner;
@@ -32,7 +32,7 @@ describe("LockableNFT", () => {
     before(async () => {
         [root, user1, other, dummy] = await ethers.getSigners();
         authority = Wallet.createRandom() as HDNodeWallet;
-        nft = await ethers.deployContract("PublicLockableNFT", ["Test", "TEST", authority.address, ""]) as unknown as PublicLockableNFT;
+        nft = await ethers.deployContract("ExampleLockableNFT", ["Test", "TEST", authority.address, ""]) as unknown as ExampleLockableNFT;
         await nft.waitForDeployment();
     });
 
