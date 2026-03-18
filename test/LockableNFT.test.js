@@ -1,7 +1,7 @@
 const truffleAssert = require("truffle-assertions");
 const Web3 = require("web3");
 const web3 = new Web3();
-const LockableNFT = artifacts.require("./LockableNFT.sol");
+const LockableNFT = artifacts.require("./PublicLockableNFT.sol");
 
 function eventEmitted(result, eventType) {
     truffleAssert.eventEmitted(result, eventType);
