@@ -21,6 +21,21 @@ async function getEventArgs(
     throw new Error(`Event ${eventName} not found in transaction`);
 }
 
+async function signUnlockProof(
+    authority: HDNodeWallet,
+    nft: ExampleLockableNFT,
+    tokenId: bigint,
+    blockNumber: number,
+): Promise<string> {
+    const block = await ethers.provider.getBlock(blockNumber);
+    const { chainId } = await ethers.provider.getNetwork();
+    const challenge = ethers.solidityPackedKeccak256(
+        ["uint256", "address", "bytes32", "uint256"],
+        [chainId, await nft.getAddress(), block!.hash, tokenId],
+    );
+    return authority.signMessage(ethers.getBytes(challenge));
+}
+
 describe("LockableNFT", () => {
     let nft: ExampleLockableNFT;
     let authority: HDNodeWallet;
@@ -32,7 +47,7 @@ describe("LockableNFT", () => {
     before(async () => {
         [root, user1, other, dummy] = await ethers.getSigners();
         authority = Wallet.createRandom() as HDNodeWallet;
-        nft = await ethers.deployContract("ExampleLockableNFT", ["Test", "TEST", authority.address, ""]) as unknown as ExampleLockableNFT;
+        nft = await ethers.deployContract("ExampleLockableNFT", ["Test", "TEST", authority.address, "", 100]) as unknown as ExampleLockableNFT;
         await nft.waitForDeployment();
     });
 
@@ -126,11 +141,11 @@ describe("LockableNFT", () => {
 
     describe("unlock", () => {
         it("unlocks a token", async () => {
-            const tx = await nft.mint(user1.address, true, "");
-            const { tokenId, challenge } = await getEventArgs(tx, nft, "Lock");
-            const proof = await authority.signMessage(ethers.getBytes(challenge));
+            const { tokenId } = await getEventArgs(await nft.mint(user1.address, true, ""), nft, "Transfer");
+            const blockNumber = await ethers.provider.getBlockNumber();
+            const proof = await signUnlockProof(authority, nft, tokenId, blockNumber);
 
-            const unlockTx = await nft.connect(user1).unlock(tokenId, proof);
+            const unlockTx = await nft.connect(user1).unlock(tokenId, blockNumber, proof);
             const unlockArgs = await getEventArgs(unlockTx, nft, "Unlock");
 
             expect(unlockArgs.tokenId).to.equal(tokenId);
@@ -140,17 +155,25 @@ describe("LockableNFT", () => {
 
         it("requires valid proof", async () => {
             const { tokenId } = await getEventArgs(await nft.mint(user1.address, true, ""), nft, "Transfer");
-            await expect(nft.connect(user1).unlock(tokenId, "0x01")).to.be.revert(ethers);
+            const blockNumber = await ethers.provider.getBlockNumber();
+            await expect(nft.connect(user1).unlock(tokenId, blockNumber, "0x01")).to.be.revert(ethers);
         });
 
         it("reverts with invalid proof regardless of caller", async () => {
             const { tokenId } = await getEventArgs(await nft.mint(user1.address, true, ""), nft, "Transfer");
-            await expect(nft.connect(other).unlock(tokenId, "0x00")).to.be.revert(ethers);
+            const blockNumber = await ethers.provider.getBlockNumber();
+            await expect(nft.connect(other).unlock(tokenId, blockNumber, "0x00")).to.be.revert(ethers);
         });
 
         it("won't unlock a token that's already unlocked", async () => {
             const { tokenId } = await getEventArgs(await nft.mint(user1.address, false, ""), nft, "Transfer");
-            await expect(nft.connect(user1).unlock(tokenId, "0x00")).to.be.revert(ethers);
+            const blockNumber = await ethers.provider.getBlockNumber();
+            await expect(nft.connect(user1).unlock(tokenId, blockNumber, "0x00")).to.be.revert(ethers);
+        });
+
+        it("reverts when proof is too old", async () => {
+            const { tokenId } = await getEventArgs(await nft.mint(user1.address, true, ""), nft, "Transfer");
+            await expect(nft.connect(user1).unlock(tokenId, 0, "0x00")).to.be.revert(ethers);
         });
     });
 });

@@ -224,6 +224,17 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "blockNumber",
+        "type": "uint256"
+      }
+    ],
+    "name": "ProofExpired",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "SendingEthToSafeFailed",
     "type": "error"
@@ -343,12 +354,6 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "challenge",
-        "type": "bytes32"
       }
     ],
     "name": "Lock",
@@ -453,25 +458,6 @@
       }
     ],
     "name": "Unlock",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "challenge",
-        "type": "bytes32"
-      }
-    ],
-    "name": "UpdateProof",
     "type": "event"
   },
   {
@@ -717,9 +703,22 @@
     "name": "lockedTokens",
     "outputs": [
       {
-        "internalType": "bytes32",
+        "internalType": "bool",
         "name": "",
-        "type": "bytes32"
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "maxProofAge",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -765,19 +764,6 @@
         "internalType": "address",
         "name": "owner",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "proofNonce",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "_value",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -992,6 +978,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint256",
+        "name": "blockNumber",
+        "type": "uint256"
+      },
+      {
         "internalType": "bytes",
         "name": "proof",
         "type": "bytes"
@@ -1000,25 +991,6 @@
     "name": "unlock",
     "outputs": [],
     "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "unlockChallenge",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {

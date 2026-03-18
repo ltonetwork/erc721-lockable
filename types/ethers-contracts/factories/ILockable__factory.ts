@@ -33,12 +33,6 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "challenge",
-        "type": "bytes32"
       }
     ],
     "name": "Lock",
@@ -99,25 +93,6 @@
       }
     ],
     "name": "Unlock",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "challenge",
-        "type": "bytes32"
-      }
-    ],
-    "name": "UpdateProof",
     "type": "event"
   },
   {
@@ -277,6 +252,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint256",
+        "name": "blockNumber",
+        "type": "uint256"
+      },
+      {
         "internalType": "bytes",
         "name": "proof",
         "type": "bytes"
@@ -285,25 +265,6 @@
     "name": "unlock",
     "outputs": [],
     "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "unlockChallenge",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   }
 ] as const;

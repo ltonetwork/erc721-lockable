@@ -12,8 +12,9 @@ contract ExampleLockableNFT is LockableNFT {
         string memory _name,
         string memory _symbol,
         address _authority,
-        string memory _authorityBaseURI
-    ) LockableNFT(_name, _symbol, _authority, _authorityBaseURI) {}
+        string memory _authorityBaseURI,
+        uint256 _maxProofAge
+    ) LockableNFT(_name, _symbol, _authority, _authorityBaseURI, _maxProofAge) {}
 
     function mint(address _to, bool _locked, string memory _tokenURI) external onlyOwner {
         _tokenIds.increment();
@@ -45,15 +46,15 @@ contract ExampleLockableNFT is LockableNFT {
         _setUnlockFee(_fee);
     }
 
-    function updateProof(uint256 tokenId) external onlyOwner {
-        _updateProof(tokenId);
+    function setMaxProofAge(uint256 _maxProofAge) external onlyOwner {
+        _setMaxProofAge(_maxProofAge);
     }
 
     function getEther() external onlyOwner {
         _getEther();
     }
 
-    function isUnlockProofValid(uint256 tokenId, bytes memory proof) external view returns (bool) {
-        return _isUnlockProofValid(tokenId, proof);
+    function isUnlockProofValid(uint256 tokenId, uint256 blockNumber, bytes memory proof) external view returns (bool) {
+        return _isUnlockProofValid(tokenId, blockNumber, proof);
     }
 }
