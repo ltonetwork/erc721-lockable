@@ -1,10 +1,10 @@
 {
   "license": "MIT",
   "scripts": {
-    "format": "npx prettier '**/*.{js,ts,json,sol,md}' --write --loglevel warn",
-    "lint": "npm run format && npx eslint '**/*.{js,ts}' --fix && npx solhint --max-warnings 0 'contracts/**/*.sol' --fix",
-    "test": "npx hardhat test",
-    "coverage": "npx hardhat coverage --testfiles \"test/*.ts\"",
+    "format": "prettier '**/*.{js,ts,json,sol,md}' --write --loglevel warn",
+    "lint": "yarn format && eslint '**/*.{js,ts}' --fix && solhint --max-warnings 0 'contracts/**/*.sol' --fix",
+    "test": "hardhat test",
+    "coverage": "hardhat coverage --testfiles \"test/*.ts\"",
     "docs": "rm -rf docs/generated/* && ./node_modules/.bin/solidity-docgen --solc-module solc -t docs -o ./docs/generated/ && ./node_modules/.bin/doctoc ./docs/generated/ --maxlevel 3 && ./node_modules/.bin/sol2uml -i test,libraries ./contracts -o ./docs/uml.svg"
   },
   "devDependencies": {
@@ -35,7 +35,7 @@
     "ethers": "^6.12.0",
     "hardhat": "^3.1.12",
     "husky": "8.0.2",
-    "mocha": "10.1.0",
+    "mocha": "^11",
     "prettier": "2.8.0",
     "prettier-plugin-solidity": "1.0.0",
     "solc": "^0.8.25",
@@ -46,5 +46,6 @@
     "@openzeppelin/contracts": "^5.0.2",
     "@openzeppelin/contracts-upgradeable": "^5.0.2"
   },
-  "type": "module"
+  "type": "module",
+  "packageManager": "yarn@4.13.0+sha512.5c20ba010c99815433e5c8453112165e673f1c7948d8d2b267f4b5e52097538658388ebc9f9580656d9b75c5cc996f990f611f99304a2197d4c56d21eea370e7"
 }

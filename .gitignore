@@ -11,7 +11,8 @@ unknown-31337.json
 bin
 scripts/logs
 docs/logs
-yarn.lock
+.yarn/install-state.gz
+package-lock.json
 
 # compiled output
 /dist
