@@ -2,11 +2,9 @@
 pragma solidity ^0.8.24;
 
 import "./LockableNFT.sol";
-import "./libraries/Counters.sol";
 
 contract ExampleLockableNFT is LockableNFT {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+    uint256 private _tokenIds;
 
     constructor(
         string memory _name,
@@ -17,8 +15,7 @@ contract ExampleLockableNFT is LockableNFT {
     ) LockableNFT(_name, _symbol, _authority, _authorityBaseURI, _maxProofAge) {}
 
     function mint(address _to, bool _locked, string memory _tokenURI) external onlyOwner {
-        _tokenIds.increment();
-        uint256 id = _tokenIds.current();
+        uint256 id = ++_tokenIds;
         _safeMint(_to, id);
         if (_locked) _lock(id);
         tokenURIs[id] = _tokenURI;

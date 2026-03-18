@@ -159,7 +159,7 @@ describe("LockableNFT", () => {
             await expect(nft.connect(user1).unlock(tokenId, blockNumber, "0x01")).to.be.revert(ethers);
         });
 
-        it("reverts with invalid proof regardless of caller", async () => {
+        it("reverts when called by non-owner", async () => {
             const { tokenId } = await getEventArgs(await nft.mint(user1.address, true, ""), nft, "Transfer");
             const blockNumber = await ethers.provider.getBlockNumber();
             await expect(nft.connect(other).unlock(tokenId, blockNumber, "0x00")).to.be.revert(ethers);

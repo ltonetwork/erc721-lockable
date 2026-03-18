@@ -6,9 +6,9 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
   
 
   export interface LockableNFTInterface extends Interface {
-    getFunction(nameOrSignature: "approve" | "authorities" | "authoritiesBaseURIs" | "balanceOf" | "getApproved" | "getAuthorities" | "getAuthorityBaseURI" | "isApprovedForAll" | "isAuthority" | "isLocked" | "lock" | "lockFee" | "lockedTokens" | "maxProofAge" | "name" | "owner" | "ownerOf" | "registeredAuthorities" | "renounceOwnership" | "safeTransferFrom(address,address,uint256)" | "safeTransferFrom(address,address,uint256,bytes)" | "setApprovalForAll" | "supportsInterface" | "symbol" | "tokenURI" | "transferFrom" | "transferOwnership" | "unlock" | "unlockFee"): FunctionFragment;
+    getFunction(nameOrSignature: "approve" | "authorities" | "authoritiesBaseURIs" | "balanceOf" | "getApproved" | "getAuthorities" | "getAuthorityBaseURI" | "isApprovedForAll" | "isAuthority" | "isLocked" | "lock" | "lockFee" | "maxProofAge" | "name" | "owner" | "ownerOf" | "registeredAuthorities" | "renounceOwnership" | "safeTransferFrom(address,address,uint256)" | "safeTransferFrom(address,address,uint256,bytes)" | "setApprovalForAll" | "supportsInterface" | "symbol" | "tokenURI" | "transferFrom" | "transferOwnership" | "unlock" | "unlockFee"): FunctionFragment;
 
-    getEvent(nameOrSignatureOrTopic: "AddAuthority" | "Approval" | "ApprovalForAll" | "Lock" | "Mint" | "OwnershipTransferred" | "RemoveAuthority" | "Transfer" | "Unlock"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "AddAuthority" | "Approval" | "ApprovalForAll" | "Lock" | "LockFeeUpdated" | "MaxProofAgeUpdated" | "Mint" | "OwnershipTransferred" | "RemoveAuthority" | "Transfer" | "Unlock" | "UnlockFeeUpdated"): EventFragment;
 
     encodeFunctionData(functionFragment: 'approve', values: [AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'authorities', values: [AddressLike]): string;
@@ -22,7 +22,6 @@ encodeFunctionData(functionFragment: 'isAuthority', values: [AddressLike]): stri
 encodeFunctionData(functionFragment: 'isLocked', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'lock', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'lockFee', values?: undefined): string;
-encodeFunctionData(functionFragment: 'lockedTokens', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'maxProofAge', values?: undefined): string;
 encodeFunctionData(functionFragment: 'name', values?: undefined): string;
 encodeFunctionData(functionFragment: 'owner', values?: undefined): string;
@@ -52,7 +51,6 @@ decodeFunctionResult(functionFragment: 'isAuthority', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'isLocked', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'lock', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'lockFee', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'lockedTokens', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'maxProofAge', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result;
@@ -120,6 +118,30 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
 
   
 
+    export namespace LockFeeUpdatedEvent {
+      export type InputTuple = [fee: BigNumberish];
+      export type OutputTuple = [fee: bigint];
+      export interface OutputObject {fee: bigint };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace MaxProofAgeUpdatedEvent {
+      export type InputTuple = [maxProofAge: BigNumberish];
+      export type OutputTuple = [maxProofAge: bigint];
+      export interface OutputObject {maxProofAge: bigint };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
     export namespace MintEvent {
       export type InputTuple = [id: BigNumberish, _to: AddressLike, _locked: boolean, _tokenURI: string];
       export type OutputTuple = [id: bigint, _to: string, _locked: boolean, _tokenURI: string];
@@ -172,6 +194,18 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
       export type InputTuple = [tokenId: BigNumberish];
       export type OutputTuple = [tokenId: bigint];
       export interface OutputObject {tokenId: bigint };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace UnlockFeeUpdatedEvent {
+      export type InputTuple = [fee: BigNumberish];
+      export type OutputTuple = [fee: bigint];
+      export interface OutputObject {fee: bigint };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -305,14 +339,6 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
     lockFee: TypedContractMethod<
       [],
       [bigint],
-      'view'
-    >
-    
-
-    
-    lockedTokens: TypedContractMethod<
-      [arg0: BigNumberish, ],
-      [boolean],
       'view'
     >
     
@@ -508,11 +534,6 @@ getFunction(nameOrSignature: 'lockFee'): TypedContractMethod<
       [bigint],
       'view'
     >;
-getFunction(nameOrSignature: 'lockedTokens'): TypedContractMethod<
-      [arg0: BigNumberish, ],
-      [boolean],
-      'view'
-    >;
 getFunction(nameOrSignature: 'maxProofAge'): TypedContractMethod<
       [],
       [bigint],
@@ -598,11 +619,14 @@ getFunction(nameOrSignature: 'unlockFee'): TypedContractMethod<
 getEvent(key: 'Approval'): TypedContractEvent<ApprovalEvent.InputTuple, ApprovalEvent.OutputTuple, ApprovalEvent.OutputObject>;
 getEvent(key: 'ApprovalForAll'): TypedContractEvent<ApprovalForAllEvent.InputTuple, ApprovalForAllEvent.OutputTuple, ApprovalForAllEvent.OutputObject>;
 getEvent(key: 'Lock'): TypedContractEvent<LockEvent.InputTuple, LockEvent.OutputTuple, LockEvent.OutputObject>;
+getEvent(key: 'LockFeeUpdated'): TypedContractEvent<LockFeeUpdatedEvent.InputTuple, LockFeeUpdatedEvent.OutputTuple, LockFeeUpdatedEvent.OutputObject>;
+getEvent(key: 'MaxProofAgeUpdated'): TypedContractEvent<MaxProofAgeUpdatedEvent.InputTuple, MaxProofAgeUpdatedEvent.OutputTuple, MaxProofAgeUpdatedEvent.OutputObject>;
 getEvent(key: 'Mint'): TypedContractEvent<MintEvent.InputTuple, MintEvent.OutputTuple, MintEvent.OutputObject>;
 getEvent(key: 'OwnershipTransferred'): TypedContractEvent<OwnershipTransferredEvent.InputTuple, OwnershipTransferredEvent.OutputTuple, OwnershipTransferredEvent.OutputObject>;
 getEvent(key: 'RemoveAuthority'): TypedContractEvent<RemoveAuthorityEvent.InputTuple, RemoveAuthorityEvent.OutputTuple, RemoveAuthorityEvent.OutputObject>;
 getEvent(key: 'Transfer'): TypedContractEvent<TransferEvent.InputTuple, TransferEvent.OutputTuple, TransferEvent.OutputObject>;
 getEvent(key: 'Unlock'): TypedContractEvent<UnlockEvent.InputTuple, UnlockEvent.OutputTuple, UnlockEvent.OutputObject>;
+getEvent(key: 'UnlockFeeUpdated'): TypedContractEvent<UnlockFeeUpdatedEvent.InputTuple, UnlockFeeUpdatedEvent.OutputTuple, UnlockFeeUpdatedEvent.OutputObject>;
 
     filters: {
       
@@ -620,6 +644,14 @@ getEvent(key: 'Unlock'): TypedContractEvent<UnlockEvent.InputTuple, UnlockEvent.
 
       'Lock(uint256)': TypedContractEvent<LockEvent.InputTuple, LockEvent.OutputTuple, LockEvent.OutputObject>;
       Lock: TypedContractEvent<LockEvent.InputTuple, LockEvent.OutputTuple, LockEvent.OutputObject>;
+    
+
+      'LockFeeUpdated(uint256)': TypedContractEvent<LockFeeUpdatedEvent.InputTuple, LockFeeUpdatedEvent.OutputTuple, LockFeeUpdatedEvent.OutputObject>;
+      LockFeeUpdated: TypedContractEvent<LockFeeUpdatedEvent.InputTuple, LockFeeUpdatedEvent.OutputTuple, LockFeeUpdatedEvent.OutputObject>;
+    
+
+      'MaxProofAgeUpdated(uint256)': TypedContractEvent<MaxProofAgeUpdatedEvent.InputTuple, MaxProofAgeUpdatedEvent.OutputTuple, MaxProofAgeUpdatedEvent.OutputObject>;
+      MaxProofAgeUpdated: TypedContractEvent<MaxProofAgeUpdatedEvent.InputTuple, MaxProofAgeUpdatedEvent.OutputTuple, MaxProofAgeUpdatedEvent.OutputObject>;
     
 
       'Mint(uint256,address,bool,string)': TypedContractEvent<MintEvent.InputTuple, MintEvent.OutputTuple, MintEvent.OutputObject>;
@@ -640,6 +672,10 @@ getEvent(key: 'Unlock'): TypedContractEvent<UnlockEvent.InputTuple, UnlockEvent.
 
       'Unlock(uint256)': TypedContractEvent<UnlockEvent.InputTuple, UnlockEvent.OutputTuple, UnlockEvent.OutputObject>;
       Unlock: TypedContractEvent<UnlockEvent.InputTuple, UnlockEvent.OutputTuple, UnlockEvent.OutputObject>;
+    
+
+      'UnlockFeeUpdated(uint256)': TypedContractEvent<UnlockFeeUpdatedEvent.InputTuple, UnlockFeeUpdatedEvent.OutputTuple, UnlockFeeUpdatedEvent.OutputObject>;
+      UnlockFeeUpdated: TypedContractEvent<UnlockFeeUpdatedEvent.InputTuple, UnlockFeeUpdatedEvent.OutputTuple, UnlockFeeUpdatedEvent.OutputObject>;
     
     };
   }

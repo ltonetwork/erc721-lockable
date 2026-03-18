@@ -18,8 +18,13 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     error IncorrectLockFee(uint256 lockFee, uint256 msgValue);
     error NotTokenOwner(address account);
     error ProofExpired(uint256 blockNumber);
+    error InvalidMaxProofAge(uint256 value);
 
-    mapping(uint256 => bool) public lockedTokens;
+    event LockFeeUpdated(uint256 fee);
+    event UnlockFeeUpdated(uint256 fee);
+    event MaxProofAgeUpdated(uint256 maxProofAge);
+
+    mapping(uint256 => bool) internal lockedTokens;
     mapping(uint256 => string) internal tokenURIs;
 
     address[] public registeredAuthorities;
@@ -43,27 +48,32 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
         uint256 _maxProofAge
     ) ERC721(_name, _symbol) Ownable(msg.sender) {
         _addAuthority(_authority, _authorityBaseURI);
-        maxProofAge = _maxProofAge;
+        _setMaxProofAge(_maxProofAge);
     }
 
     function tokenURI(uint256 tokenId) public view virtual override(ERC721, ILockable) returns (string memory) {
+        _requireOwned(tokenId);
         return tokenURIs[tokenId];
     }
 
-    function _setTokenURI(uint256 _tokenId, string memory _tokenURI) internal requireOwned(_tokenId) {
+    function _setTokenURI(uint256 _tokenId, string memory _tokenURI) internal {
         tokenURIs[_tokenId] = _tokenURI;
     }
 
     function _setUnlockFee(uint256 _fee) internal {
         unlockFee = _fee;
+        emit UnlockFeeUpdated(_fee);
     }
 
     function _setLockFee(uint256 _fee) internal {
         lockFee = _fee;
+        emit LockFeeUpdated(_fee);
     }
 
     function _setMaxProofAge(uint256 _maxProofAge) internal {
+        if (_maxProofAge == 0 || _maxProofAge >= 256) revert InvalidMaxProofAge(_maxProofAge);
         maxProofAge = _maxProofAge;
+        emit MaxProofAgeUpdated(_maxProofAge);
     }
 
     function ownerOf(uint256 tokenId) virtual override(ERC721, ILockable) public view returns (address owner) {
@@ -87,7 +97,8 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
         return authorities.verify(challenge, proof);
     }
 
-    function unlock(uint256 tokenId, uint256 blockNumber, bytes memory proof) external payable requireOwned(tokenId) {
+    function unlock(uint256 tokenId, uint256 blockNumber, bytes memory proof) external payable {
+        if (ownerOf(tokenId) != msg.sender) revert NotTokenOwner(msg.sender);
         if (!_isLocked(tokenId)) revert TokenNotLocked(tokenId);
         if (blockNumber >= block.number || block.number - blockNumber > maxProofAge) revert ProofExpired(blockNumber);
         if (!_isUnlockProofValid(tokenId, blockNumber, proof)) revert UnlockVerificationFailed(tokenId, proof);
@@ -97,7 +108,7 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     }
 
     function isLocked(uint256 tokenId) external view requireOwned(tokenId) returns (bool) {
-        return _isLocked(tokenId);
+        return lockedTokens[tokenId];
     }
 
     function _isLocked(uint256 tokenId) internal view returns (bool) {
