@@ -135,6 +135,7 @@ describe("LockableNFT", () => {
 
             expect(unlockArgs.tokenId).to.equal(tokenId);
             expect(await nft.isLocked(tokenId)).to.equal(false);
+            expect(await nft.ownerOf(tokenId)).to.equal(user1.address);
         });
 
         it("requires valid proof", async () => {

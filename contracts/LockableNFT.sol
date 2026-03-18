@@ -19,6 +19,7 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     error IncorrectUnlockFee(uint256 unlockFee, uint256 msgValue);
     error IncorrectLockFee(uint256 lockFee, uint256 msgValue);
     error NotTokenOwner(address account);
+    error NFTNotOwned(uint256 tokenId);
 
     Counters.Counter public proofNonce;
     mapping(uint256 => bytes32) public lockedTokens;
@@ -32,7 +33,7 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     uint256 public lockFee;
 
     modifier requireOwned(uint256 _tokenId) {
-        require(_requireOwned(_tokenId) != address(0), "NFT not owned");
+        if (_requireOwned(_tokenId) == address(0)) revert NFTNotOwned(_tokenId);
         _;
     }
 
@@ -62,23 +63,23 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
 
     function lock(uint256 _tokenId) external payable {
         if (ownerOf(_tokenId) != msg.sender) revert NotTokenOwner(msg.sender);
-        if (_isLocked(_tokenId) == true) revert TokenLocked(_tokenId);
+        if (_isLocked(_tokenId)) revert TokenLocked(_tokenId);
         if (msg.value != lockFee) revert IncorrectLockFee(lockFee, msg.value);
         _lock(_tokenId);
     }
 
     function _updateProof(uint256 tokenId) internal requireOwned(tokenId) {
-        if (_isLocked(tokenId) == false) revert TokenNotLocked(tokenId);
+        if (!_isLocked(tokenId)) revert TokenNotLocked(tokenId);
         delete lockedTokens[tokenId];
         proofNonce.increment();
-        bytes32 challenge = keccak256(abi.encodePacked(proofNonce.current(), tokenId));
+        bytes32 challenge = keccak256(abi.encodePacked(block.chainid, address(this), proofNonce.current(), tokenId));
         lockedTokens[tokenId] = challenge;
         emit UpdateProof(tokenId, challenge);
     }
 
     function _lock(uint256 tokenId) internal {
         proofNonce.increment();
-        bytes32 challenge = keccak256(abi.encodePacked(proofNonce.current(), tokenId));
+        bytes32 challenge = keccak256(abi.encodePacked(block.chainid, address(this), proofNonce.current(), tokenId));
         lockedTokens[tokenId] = challenge;
         emit Lock(tokenId, challenge);
     }
@@ -88,16 +89,15 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     }
 
     function unlock(uint256 tokenId, bytes memory proof) external payable requireOwned(tokenId) {
-        if (_isLocked(tokenId) == false) revert TokenNotLocked(tokenId);
-        if (authorities.verify(lockedTokens[tokenId], proof) == false) revert UnlockVerificationFailed(tokenId, proof);
+        if (!_isLocked(tokenId)) revert TokenNotLocked(tokenId);
+        if (!_isUnlockProofValid(tokenId, proof)) revert UnlockVerificationFailed(tokenId, proof);
         if (msg.value != unlockFee) revert IncorrectUnlockFee(unlockFee, msg.value);
         delete lockedTokens[tokenId];
-        _transfer(ownerOf(tokenId), msg.sender, tokenId);
         emit Unlock(tokenId);
     }
 
     function unlockChallenge(uint256 tokenId) external view requireOwned(tokenId) returns (bytes32) {
-        if (_isLocked(tokenId) == false) revert TokenNotLocked(tokenId);
+        if (!_isLocked(tokenId)) revert TokenNotLocked(tokenId);
         return lockedTokens[tokenId];
     }
 
@@ -110,7 +110,7 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     }
 
     function _addAuthority(address account, string memory _authorityBaseURI) internal {
-        if (authorities[account] == false) {
+        if (!authorities[account]) {
             registeredAuthorities[authoritiesCounter.current()] = account;
             authoritiesCounter.increment();
             authorities[account] = true;
@@ -120,7 +120,7 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     }
 
     function _removeAuthority(address account) internal {
-        if (authorities[account] == false) revert AddressIsNotAuthority(account);
+        if (!authorities[account]) revert AddressIsNotAuthority(account);
         authorities[account] = false;
         delete authoritiesBaseURIs[account];
         emit RemoveAuthority(account);
@@ -145,8 +145,8 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public virtual override(ERC721, ILockable) {
-        if (_isLocked(tokenId) == true) revert TokenLocked(tokenId);
-        super.safeTransferFrom(from, to, tokenId);
+        if (_isLocked(tokenId)) revert TokenLocked(tokenId);
+        super.transferFrom(from, to, tokenId);
     }
 
     function _getEther() internal {
