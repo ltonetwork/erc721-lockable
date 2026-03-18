@@ -3,6 +3,7 @@
   "scripts": {
     "format": "prettier '**/*.{js,ts,json,sol,md}' --write --loglevel warn",
     "lint": "yarn format && eslint '**/*.{js,ts}' --fix && solhint --max-warnings 0 'contracts/**/*.sol' --fix",
+    "build": "hardhat compile",
     "test": "hardhat test",
     "coverage": "hardhat coverage --testfiles \"test/*.ts\"",
     "docs": "rm -rf docs/generated/* && ./node_modules/.bin/solidity-docgen --solc-module solc -t docs -o ./docs/generated/ && ./node_modules/.bin/doctoc ./docs/generated/ --maxlevel 3 && ./node_modules/.bin/sol2uml -i test,libraries ./contracts -o ./docs/uml.svg"
