@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./libraries/Counters.sol";
-import "./Verify.sol";
+import "./libraries/Verify.sol";
 import "./ILockable.sol";
 
 contract LockableNFT is ERC721, ILockable, Ownable {
@@ -197,5 +197,4 @@ contract LockableNFT is ERC721, ILockable, Ownable {
         (bool sent, ) = msg.sender.call{value: contractBalance}("");
         if (!sent) revert SendingEthToSafeFailed();
     }
-   
 }
