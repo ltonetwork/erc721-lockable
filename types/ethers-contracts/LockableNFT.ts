@@ -6,14 +6,13 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
   
 
   export interface LockableNFTInterface extends Interface {
-    getFunction(nameOrSignature: "approve" | "authorities" | "authoritiesBaseURIs" | "authoritiesCounter" | "balanceOf" | "getApproved" | "getAuthorities" | "getAuthorityBaseURI" | "isApprovedForAll" | "isAuthority" | "isLocked" | "lock" | "lockFee" | "lockedTokens" | "maxProofAge" | "name" | "owner" | "ownerOf" | "registeredAuthorities" | "renounceOwnership" | "safeTransferFrom(address,address,uint256)" | "safeTransferFrom(address,address,uint256,bytes)" | "setApprovalForAll" | "supportsInterface" | "symbol" | "tokenURI" | "tokenURIs" | "transferFrom" | "transferOwnership" | "unlock" | "unlockFee"): FunctionFragment;
+    getFunction(nameOrSignature: "approve" | "authorities" | "authoritiesBaseURIs" | "balanceOf" | "getApproved" | "getAuthorities" | "getAuthorityBaseURI" | "isApprovedForAll" | "isAuthority" | "isLocked" | "lock" | "lockFee" | "lockedTokens" | "maxProofAge" | "name" | "owner" | "ownerOf" | "registeredAuthorities" | "renounceOwnership" | "safeTransferFrom(address,address,uint256)" | "safeTransferFrom(address,address,uint256,bytes)" | "setApprovalForAll" | "supportsInterface" | "symbol" | "tokenURI" | "transferFrom" | "transferOwnership" | "unlock" | "unlockFee"): FunctionFragment;
 
     getEvent(nameOrSignatureOrTopic: "AddAuthority" | "Approval" | "ApprovalForAll" | "Lock" | "Mint" | "OwnershipTransferred" | "RemoveAuthority" | "Transfer" | "Unlock"): EventFragment;
 
     encodeFunctionData(functionFragment: 'approve', values: [AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'authorities', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'authoritiesBaseURIs', values: [AddressLike]): string;
-encodeFunctionData(functionFragment: 'authoritiesCounter', values?: undefined): string;
 encodeFunctionData(functionFragment: 'balanceOf', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'getApproved', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'getAuthorities', values?: undefined): string;
@@ -36,7 +35,6 @@ encodeFunctionData(functionFragment: 'setApprovalForAll', values: [AddressLike, 
 encodeFunctionData(functionFragment: 'supportsInterface', values: [BytesLike]): string;
 encodeFunctionData(functionFragment: 'symbol', values?: undefined): string;
 encodeFunctionData(functionFragment: 'tokenURI', values: [BigNumberish]): string;
-encodeFunctionData(functionFragment: 'tokenURIs', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'transferFrom', values: [AddressLike, AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'transferOwnership', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'unlock', values: [BigNumberish, BigNumberish, BytesLike]): string;
@@ -45,7 +43,6 @@ encodeFunctionData(functionFragment: 'unlockFee', values?: undefined): string;
     decodeFunctionResult(functionFragment: 'approve', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'authorities', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'authoritiesBaseURIs', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'authoritiesCounter', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getApproved', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getAuthorities', data: BytesLike): Result;
@@ -68,7 +65,6 @@ decodeFunctionResult(functionFragment: 'setApprovalForAll', data: BytesLike): Re
 decodeFunctionResult(functionFragment: 'supportsInterface', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'symbol', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'tokenURI', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'tokenURIs', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'transferFrom', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result;
@@ -237,14 +233,6 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
     authoritiesBaseURIs: TypedContractMethod<
       [arg0: AddressLike, ],
       [string],
-      'view'
-    >
-    
-
-    
-    authoritiesCounter: TypedContractMethod<
-      [],
-      [bigint],
       'view'
     >
     
@@ -426,14 +414,6 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
     
 
     
-    tokenURIs: TypedContractMethod<
-      [arg0: BigNumberish, ],
-      [string],
-      'view'
-    >
-    
-
-    
     transferFrom: TypedContractMethod<
       [from: AddressLike, to: AddressLike, tokenId: BigNumberish, ],
       [void],
@@ -481,11 +461,6 @@ getFunction(nameOrSignature: 'authorities'): TypedContractMethod<
 getFunction(nameOrSignature: 'authoritiesBaseURIs'): TypedContractMethod<
       [arg0: AddressLike, ],
       [string],
-      'view'
-    >;
-getFunction(nameOrSignature: 'authoritiesCounter'): TypedContractMethod<
-      [],
-      [bigint],
       'view'
     >;
 getFunction(nameOrSignature: 'balanceOf'): TypedContractMethod<
@@ -595,11 +570,6 @@ getFunction(nameOrSignature: 'symbol'): TypedContractMethod<
     >;
 getFunction(nameOrSignature: 'tokenURI'): TypedContractMethod<
       [tokenId: BigNumberish, ],
-      [string],
-      'view'
-    >;
-getFunction(nameOrSignature: 'tokenURIs'): TypedContractMethod<
-      [arg0: BigNumberish, ],
       [string],
       'view'
     >;

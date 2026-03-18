@@ -3,13 +3,11 @@ pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./libraries/Counters.sol";
 import "./libraries/Verify.sol";
 import "./ILockable.sol";
 
 abstract contract LockableNFT is ERC721, ILockable, Ownable {
     using Verify for mapping(address => bool);
-    using Counters for Counters.Counter;
 
     error SendingEthToSafeFailed();
     error TokenLocked(uint256 _tokenId);
@@ -19,14 +17,13 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     error IncorrectUnlockFee(uint256 unlockFee, uint256 msgValue);
     error IncorrectLockFee(uint256 lockFee, uint256 msgValue);
     error NotTokenOwner(address account);
-    error NFTNotOwned(uint256 tokenId);
     error ProofExpired(uint256 blockNumber);
 
     mapping(uint256 => bool) public lockedTokens;
-    mapping(uint256 => string) public tokenURIs;
+    mapping(uint256 => string) internal tokenURIs;
 
-    Counters.Counter public authoritiesCounter;
-    mapping(uint256 => address) public registeredAuthorities;
+    address[] public registeredAuthorities;
+    mapping(address => uint256) private authorityIndex;
     mapping(address => bool) public authorities;
     mapping(address => string) public authoritiesBaseURIs;
     uint256 public unlockFee;
@@ -34,7 +31,7 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     uint256 public maxProofAge;
 
     modifier requireOwned(uint256 _tokenId) {
-        if (_requireOwned(_tokenId) == address(0)) revert NFTNotOwned(_tokenId);
+        _requireOwned(_tokenId);
         _;
     }
 
@@ -108,9 +105,10 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     }
 
     function _addAuthority(address account, string memory _authorityBaseURI) internal {
+        if (account == address(0)) revert AddressIsNotAuthority(account);
         if (!authorities[account]) {
-            registeredAuthorities[authoritiesCounter.current()] = account;
-            authoritiesCounter.increment();
+            authorityIndex[account] = registeredAuthorities.length;
+            registeredAuthorities.push(account);
             authorities[account] = true;
         }
         authoritiesBaseURIs[account] = _authorityBaseURI;
@@ -119,6 +117,15 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
 
     function _removeAuthority(address account) internal {
         if (!authorities[account]) revert AddressIsNotAuthority(account);
+        uint256 index = authorityIndex[account];
+        uint256 lastIndex = registeredAuthorities.length - 1;
+        if (index != lastIndex) {
+            address last = registeredAuthorities[lastIndex];
+            registeredAuthorities[index] = last;
+            authorityIndex[last] = index;
+        }
+        registeredAuthorities.pop();
+        delete authorityIndex[account];
         authorities[account] = false;
         delete authoritiesBaseURIs[account];
         emit RemoveAuthority(account);
@@ -133,13 +140,14 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     }
 
     function getAuthorities() external view returns (address[] memory, string[] memory) {
-        address[] memory authoritiesArr = new address[](authoritiesCounter.current());
-        string[] memory authoritiesBaseURIArr = new string[](authoritiesCounter.current());
-        for (uint256 i = 0; i < authoritiesCounter.current(); i++) {
-            authoritiesArr[i] = registeredAuthorities[i];
-            authoritiesBaseURIArr[i] = authoritiesBaseURIs[registeredAuthorities[i]];
+        uint256 len = registeredAuthorities.length;
+        address[] memory addrs = new address[](len);
+        string[] memory uris = new string[](len);
+        for (uint256 i = 0; i < len; i++) {
+            addrs[i] = registeredAuthorities[i];
+            uris[i] = authoritiesBaseURIs[registeredAuthorities[i]];
         }
-        return (authoritiesArr, authoritiesBaseURIArr);
+        return (addrs, uris);
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public virtual override(ERC721, ILockable) {
@@ -149,7 +157,7 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
 
     function _getEther() internal {
         uint256 contractBalance = address(this).balance;
-        (bool sent, ) = msg.sender.call{value: contractBalance}("");
+        (bool sent, ) = owner().call{value: contractBalance}("");
         if (!sent) revert SendingEthToSafeFailed();
     }
 }
