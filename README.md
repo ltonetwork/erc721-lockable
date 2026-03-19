@@ -73,19 +73,22 @@ yarn test    # run the test suite
 
 ## Configuration
 
-Copy `.env.example` to `.env` and fill in the values needed for your target network:
+Copy `.env.example` to `.env` and fill in the values for your target network:
 
 ```
 ETH_MAINNET_RPC_URL=
 ETH_SEPOLIA_RPC_URL=
+BASE_MAINNET_RPC_URL=
+BASE_SEPOLIA_RPC_URL=
 ETHERSCAN_API_KEY=
+BASESCAN_API_KEY=
 ```
 
-`ETHERSCAN_API_KEY` is only needed for contract verification via `hardhat verify`.
+The API keys are only needed for contract verification via `hardhat verify`.
 
 ## Deployment
 
-Configure the target network in `hardhat.config.ts`. The two built-in networks are `mainnet` and `sepolia`.
+Four networks are configured out of the box: `mainnet`, `sepolia`, `base`, `baseSepolia`.
 
 Write a deploy script that calls:
 
@@ -96,5 +99,5 @@ new ExampleLockableNFT(name, symbol, authorityAddress, authorityBaseURI, maxProo
 Then deploy with:
 
 ```bash
-yarn hardhat run scripts/your-deploy-script.ts --network sepolia
+yarn hardhat run scripts/your-deploy-script.ts --network base
 ```

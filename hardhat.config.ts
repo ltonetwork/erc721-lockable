@@ -39,5 +39,15 @@ export default defineConfig({
       chainType: "l1",
       url: configVariable("ETH_SEPOLIA_RPC_URL"),
     },
+    base: {
+      type: "http",
+      chainType: "op",
+      url: configVariable("BASE_MAINNET_RPC_URL"),
+    },
+    baseSepolia: {
+      type: "http",
+      chainType: "op",
+      url: configVariable("BASE_SEPOLIA_RPC_URL"),
+    },
   },
 });
