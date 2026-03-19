@@ -52,7 +52,6 @@ abstract contract LockableNFT is ERC721, ILockable {
     }
 
     function _setAuthority(address _authority, string memory _authorityBaseURI) internal {
-        if (_authority == address(0)) revert InvalidAuthority();
         authority = _authority;
         authorityBaseURI = _authorityBaseURI;
         emit AuthorityUpdated(_authority, _authorityBaseURI);
@@ -79,6 +78,7 @@ abstract contract LockableNFT is ERC721, ILockable {
     }
 
     function lock(uint256 _tokenId) external payable {
+        if (authority == address(0)) revert InvalidAuthority();
         if (ownerOf(_tokenId) != msg.sender) revert NotTokenOwner(msg.sender);
         if (_isLocked(_tokenId)) revert TokenLocked(_tokenId);
         if (msg.value != lockFee) revert IncorrectLockFee(lockFee, msg.value);
@@ -102,11 +102,11 @@ abstract contract LockableNFT is ERC721, ILockable {
     }
 
     function isLocked(uint256 tokenId) external view requireOwned(tokenId) returns (bool) {
-        return lockedTokens[tokenId];
+        return _isLocked(tokenId);
     }
 
     function _isLocked(uint256 tokenId) internal view returns (bool) {
-        return lockedTokens[tokenId];
+        return authority != address(0) && lockedTokens[tokenId];
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public virtual override(ERC721, ILockable) {

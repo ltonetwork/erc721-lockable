@@ -59,6 +59,19 @@ describe("LockableNFT", () => {
         it("can only be called by the contract owner", async () => {
             await expect(nft.connect(other).setAuthority(other.address, "")).to.be.revert(ethers);
         });
+
+        it("setting authority to zero unlocks all tokens and blocks new locks", async () => {
+            const { tokenId } = await getEventArgs(await nft.mint(user1.address, true), nft, "Transfer");
+            expect(await nft.isLocked(tokenId)).to.equal(true);
+
+            await nft.setAuthority(ethers.ZeroAddress, "");
+
+            expect(await nft.isLocked(tokenId)).to.equal(false);
+            await expect(nft.connect(user1).lock(tokenId)).to.be.revert(ethers);
+
+            // restore for subsequent tests
+            await nft.setAuthority(authority.address, "https://new-uri.example/");
+        });
     });
 
     describe("mint", () => {
