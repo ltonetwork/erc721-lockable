@@ -1,83 +1,100 @@
 # ERC721 Lockable NFT
 
-`ERC721Lockable` provides a lock mechanism for NFT smart contracts. Only the owner of an NFT can lock it. Unlocking the NFT is done also done by the owner, but requires approval by an authority. The unlock function checks whether the signature provided in the unlock request corresponds to an authorized authority address.
-
-`LockService` can be used by an existing NFT project to provide a similar function. The lock service requires approval for the NFT. To lock the NFT, it is transfered to the lock service. The original owner can unlock providing with a signature of an authority, which will return the NFT to them.
+`LockableNFT` is an abstract ERC721 contract that adds a lock/unlock mechanism to NFTs. Only the token owner can lock or unlock their token. Unlocking requires a valid signature from a designated authority.
 
 ## Ownables
 
-Lockable NFTs can be used in combination with [LTO Ownables](https://docs.ltonetwork.com/ownables). The Ownable is provided as unlockable content for the NFT. At any time, either the NFT or the Ownable is locked. When the NFT is unlocked and tradable, the Ownable needs to be in the locked state and uploaded to an Ownable bridge. When the Ownable is unlocked in the owner's wallet, the NFT needs to be locked to ensure a new owner will always get the most up-to-date version of the Ownable.
+Lockable NFTs are designed for use with [LTO Ownables](https://docs.ltonetwork.com/ownables). The Ownable is provided as unlockable content tied to the NFT. At any time, either the NFT or the Ownable is locked:
 
-## Smart contracts 
+- When the NFT is **locked**, the Ownable can be unlocked and used in the owner's wallet.
+- When the NFT is **unlocked** and tradable, the Ownable must be locked and held by the authority's bridge, ensuring a new owner always receives the latest version.
 
-#### Verify library:
-The Verify library provides two functions for signature verification. The first function recovers an Ethereum address from a signed message hash and signature, while the second function verifies whether a given address is authorized to perform an action based on the provided signature. 
+## Contracts
 
-#### ERC721Lockable:
-ERC721Lockable extends ERC721, and adds the ability to lock and unlock NFTs. The lock and unlock functions require the owner of the NFT to perform the action, and the unlock function additionally requires a valid signature from an authorized address. The Verify library is used to verify the signature. 
+### `LockableNFT` (abstract)
 
-#### LockableNFT:
-LockableNFT is an implementation of ERC721Lockable. It allows users to mint new NFTs, set the base URI, and add or remove authorized addresses. The mint function increments a counter to generate a new token ID, mints the token, and optionally locks it based on the argument provided. The setBaseURI function allows the owner to set the base URI for the NFTs. The addAuthority and removeAuthority functions allow the owner to add or remove authorized addresses.
+The core contract. Inherits from OpenZeppelin's `ERC721` and `Ownable`.
 
+**Authority**
+
+A single authority is configured at deploy time via an Ethereum address and a base URI pointing to the authority's content server. The contract owner can update both via `setAuthority`.
+
+**Locking**
+
+The token owner calls `lock(tokenId)`. An optional `lockFee` (in ETH) can be required.
+
+**Unlocking**
+
+The token owner calls `unlock(tokenId, blockNumber, proof)`. The proof is an ECDSA signature by the authority over:
+
+```
+keccak256(chainId, contractAddress, blockhash(blockNumber), tokenId)
+```
+
+The signed block must be recent — within `maxProofAge` blocks (between 1 and 255, enforced at deploy time and updatable). This gives proofs a natural expiry without any on-chain nonce management.
+
+**Token URI**
+
+`tokenURI(tokenId)` returns `authorityBaseURI + tokenId`. The content lives on the authority's server; the URI is implicit from the contract configuration and requires no per-token storage.
+
+**Transfer guard**
+
+`transferFrom` reverts if the token is locked, preventing transfers while the associated Ownable is in use.
+
+### `ExampleLockableNFT`
+
+A ready-to-deploy concrete implementation. Exposes:
+
+| Function | Access |
+|---|---|
+| `mint(address, bool)` | `onlyOwner` |
+| `setAuthority(address, string)` | `onlyOwner` |
+| `setLockFee(uint256)` | `onlyOwner` |
+| `setUnlockFee(uint256)` | `onlyOwner` |
+| `setMaxProofAge(uint256)` | `onlyOwner` |
+| `getEther()` | `onlyOwner` |
+
+### `Verify` library
+
+Wraps OpenZeppelin's `ECDSA` and `MessageHashUtils`. Provides `recover(hash, signature)` and `verify(account, hash, signature)`.
 
 ## Installation
 
-Install dependencies
-
 ```bash
-$ npm install
+yarn install
 ```
 
-## Run tests
+## Development
 
 ```bash
-$ npm run test
+yarn build   # compile contracts and regenerate TypeScript types
+yarn test    # run the test suite
 ```
 
 ## Configuration
 
-Create a `.env` file (look at `.env.example` for reference) or set environment variables that you need for your specific case
+Copy `.env.example` to `.env` and fill in the values needed for your target network:
 
-```bash
+```
+ETH_MAINNET_RPC_URL=
+ETH_SEPOLIA_RPC_URL=
 ETHERSCAN_API_KEY=
-ARBISCAN_API_KEY=
-POLYGONSCAN_API_KEY=
-ETH_MAINNET_ALCHEMY_API_KEY=
-ETH_SEPOLIA_ALCHEMY_API_KEY=
-ARBITRUM_MAINNET_ALCHEMY_API_KEY=
-ARBITRUM_SEPOLIA_ALCHEMY_API_KEY=
-POLYGON_MAINNET_ALCHEMY_API_KEY=
-POLYGON_MUMBAI_ALCHEMY_API_KEY=
-TESTNET_MNEMONIC = ''
-MAINNET_MNEMONIC = ''
-COINMARKETCAP_API_KEY=
 ```
 
-- Deployment to rinkeby is done via [Infura](https://infura.io/).
-- Create an [Etherscan API key](https://etherscan.io/myapikey) for contract verification.
+`ETHERSCAN_API_KEY` is only needed for contract verification via `hardhat verify`.
 
 ## Deployment
 
-### Ganache
+Configure the target network in `hardhat.config.ts`. The two built-in networks are `mainnet` and `sepolia`.
 
-[Ganache](https://www.trufflesuite.com/ganache) is a personal Ethereum blockchain for development and
-tests.
+Write a deploy script that calls:
 
-```bash
-$ npm run migrate:dev
+```solidity
+new ExampleLockableNFT(name, symbol, authorityAddress, authorityBaseURI, maxProofAge)
 ```
 
-### Goerli
-
-Deploy the smart contract on the [Goerli](https://goerli.etherscan.io/) Ethereum testnet. Make sure your wallet has enough
-tesnet ETH to pay for the GAS. You can obtain ETH for Goerli through a faucet.
+Then deploy with:
 
 ```bash
-$ npm run migrate:rinkeby
-```
-
-### Ethereum mainnet
-
-```bash
-$ npm run deploy
+yarn hardhat run scripts/your-deploy-script.ts --network sepolia
 ```
