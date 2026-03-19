@@ -13,11 +13,13 @@ Lockable NFTs are designed for use with [LTO Ownables](https://docs.ltonetwork.c
 
 ### `LockableNFT` (abstract)
 
-The core contract. Inherits from OpenZeppelin's `ERC721` and `Ownable`.
+The core contract. Inherits from OpenZeppelin's `ERC721`.
 
 **Authority**
 
 A single authority is configured at deploy time via an Ethereum address and a base URI pointing to the authority's content server. The contract owner can update both via `setAuthority`.
+
+Setting the authority to `address(0)` decommissions the lock mechanism: all tokens become freely transferable regardless of their stored lock state, and new locks are blocked. If a new authority is later appointed, previously locked tokens (whose state is preserved on-chain) become locked again.
 
 **Locking**
 
