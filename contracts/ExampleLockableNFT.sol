@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./LockableNFT.sol";
 
-contract ExampleLockableNFT is LockableNFT {
+contract ExampleLockableNFT is LockableNFT, Ownable {
+
+    error SendingEthToSafeFailed();
     uint256 private _tokenIds;
 
     constructor(
@@ -12,7 +15,7 @@ contract ExampleLockableNFT is LockableNFT {
         address _authority,
         string memory _authorityBaseURI,
         uint256 _maxProofAge
-    ) LockableNFT(_name, _symbol, _authority, _authorityBaseURI, _maxProofAge) {}
+    ) LockableNFT(_name, _symbol, _authority, _authorityBaseURI, _maxProofAge) Ownable(msg.sender) {}
 
     function mint(address _to, bool _locked) external onlyOwner {
         uint256 id = ++_tokenIds;
@@ -38,6 +41,8 @@ contract ExampleLockableNFT is LockableNFT {
     }
 
     function getEther() external onlyOwner {
-        _getEther();
+        uint256 contractBalance = address(this).balance;
+        (bool sent, ) = owner().call{value: contractBalance}("");
+        if (!sent) revert SendingEthToSafeFailed();
     }
 }

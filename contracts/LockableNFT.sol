@@ -2,14 +2,12 @@
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./libraries/Verify.sol";
 import "./ILockable.sol";
 
-abstract contract LockableNFT is ERC721, ILockable, Ownable {
+abstract contract LockableNFT is ERC721, ILockable {
 
-    error SendingEthToSafeFailed();
     error TokenLocked(uint256 _tokenId);
     error TokenNotLocked(uint256 _tokenId);
     error UnlockVerificationFailed(uint256 tokenId, bytes proof);
@@ -42,7 +40,7 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
         address _authority,
         string memory _authorityBaseURI,
         uint256 _maxProofAge
-    ) ERC721(_name, _symbol) Ownable(msg.sender) {
+    ) ERC721(_name, _symbol) {
         _setAuthority(_authority, _authorityBaseURI);
         _setMaxProofAge(_maxProofAge);
     }
@@ -114,9 +112,4 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
         super.transferFrom(from, to, tokenId);
     }
 
-    function _getEther() internal {
-        uint256 contractBalance = address(this).balance;
-        (bool sent, ) = owner().call{value: contractBalance}("");
-        if (!sent) revert SendingEthToSafeFailed();
-    }
 }
