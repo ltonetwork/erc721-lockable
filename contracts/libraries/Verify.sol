@@ -18,11 +18,4 @@ library Verify {
         return recover(hash, signature) == account;
     }
 
-    function verify(
-        mapping(address => bool) storage verifiers,
-        bytes32 hash,
-        bytes memory signature
-    ) internal view returns (bool) {
-        return verifiers[recover(hash, signature)];
-    }
 }
