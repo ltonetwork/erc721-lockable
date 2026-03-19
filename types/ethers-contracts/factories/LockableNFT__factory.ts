@@ -169,6 +169,11 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "InvalidAuthority",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -193,39 +198,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnableInvalidOwner",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "OwnableUnauthorizedAccount",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "blockNumber",
         "type": "uint256"
       }
     ],
     "name": "ProofExpired",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "SendingEthToSafeFailed",
     "type": "error"
   },
   {
@@ -397,25 +375,6 @@
       }
     ],
     "name": "Mint",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnershipTransferred",
     "type": "event"
   },
   {
@@ -647,19 +606,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -676,13 +622,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -824,19 +763,6 @@
       }
     ],
     "name": "transferFrom",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
