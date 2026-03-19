@@ -8,6 +8,7 @@ import "./ILockable.sol";
 
 abstract contract LockableNFT is ERC721, ILockable {
 
+    error InvalidAuthority();
     error TokenLocked(uint256 _tokenId);
     error TokenNotLocked(uint256 _tokenId);
     error UnlockVerificationFailed(uint256 tokenId, bytes proof);
@@ -51,6 +52,7 @@ abstract contract LockableNFT is ERC721, ILockable {
     }
 
     function _setAuthority(address _authority, string memory _authorityBaseURI) internal {
+        if (_authority == address(0)) revert InvalidAuthority();
         authority = _authority;
         authorityBaseURI = _authorityBaseURI;
         emit AuthorityUpdated(_authority, _authorityBaseURI);
