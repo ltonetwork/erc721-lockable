@@ -12,17 +12,17 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "account",
+        "name": "authority",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "string",
-        "name": "_authorityBaseURI",
+        "name": "baseURI",
         "type": "string"
       }
     ],
-    "name": "AddAuthority",
+    "name": "AuthorityUpdated",
     "type": "event"
   },
   {
@@ -58,28 +58,9 @@
         "internalType": "bool",
         "name": "_locked",
         "type": "bool"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "_tokenURI",
-        "type": "string"
       }
     ],
     "name": "Mint",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "RemoveAuthority",
     "type": "event"
   },
   {
@@ -94,62 +75,6 @@
     ],
     "name": "Unlock",
     "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "getAuthorities",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      },
-      {
-        "internalType": "string[]",
-        "name": "",
-        "type": "string[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "getAuthorityBaseURI",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "isAuthority",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
   },
   {
     "inputs": [

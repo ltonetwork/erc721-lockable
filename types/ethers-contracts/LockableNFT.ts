@@ -6,19 +6,16 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
   
 
   export interface LockableNFTInterface extends Interface {
-    getFunction(nameOrSignature: "approve" | "authorities" | "authoritiesBaseURIs" | "balanceOf" | "getApproved" | "getAuthorities" | "getAuthorityBaseURI" | "isApprovedForAll" | "isAuthority" | "isLocked" | "lock" | "lockFee" | "maxProofAge" | "name" | "owner" | "ownerOf" | "registeredAuthorities" | "renounceOwnership" | "safeTransferFrom(address,address,uint256)" | "safeTransferFrom(address,address,uint256,bytes)" | "setApprovalForAll" | "supportsInterface" | "symbol" | "tokenURI" | "transferFrom" | "transferOwnership" | "unlock" | "unlockFee"): FunctionFragment;
+    getFunction(nameOrSignature: "approve" | "authority" | "authorityBaseURI" | "balanceOf" | "getApproved" | "isApprovedForAll" | "isLocked" | "lock" | "lockFee" | "maxProofAge" | "name" | "owner" | "ownerOf" | "renounceOwnership" | "safeTransferFrom(address,address,uint256)" | "safeTransferFrom(address,address,uint256,bytes)" | "setApprovalForAll" | "supportsInterface" | "symbol" | "tokenURI" | "transferFrom" | "transferOwnership" | "unlock" | "unlockFee"): FunctionFragment;
 
-    getEvent(nameOrSignatureOrTopic: "AddAuthority" | "Approval" | "ApprovalForAll" | "Lock" | "LockFeeUpdated" | "MaxProofAgeUpdated" | "Mint" | "OwnershipTransferred" | "RemoveAuthority" | "Transfer" | "Unlock" | "UnlockFeeUpdated"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "Approval" | "ApprovalForAll" | "AuthorityUpdated" | "Lock" | "LockFeeUpdated" | "MaxProofAgeUpdated" | "Mint" | "OwnershipTransferred" | "Transfer" | "Unlock" | "UnlockFeeUpdated"): EventFragment;
 
     encodeFunctionData(functionFragment: 'approve', values: [AddressLike, BigNumberish]): string;
-encodeFunctionData(functionFragment: 'authorities', values: [AddressLike]): string;
-encodeFunctionData(functionFragment: 'authoritiesBaseURIs', values: [AddressLike]): string;
+encodeFunctionData(functionFragment: 'authority', values?: undefined): string;
+encodeFunctionData(functionFragment: 'authorityBaseURI', values?: undefined): string;
 encodeFunctionData(functionFragment: 'balanceOf', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'getApproved', values: [BigNumberish]): string;
-encodeFunctionData(functionFragment: 'getAuthorities', values?: undefined): string;
-encodeFunctionData(functionFragment: 'getAuthorityBaseURI', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'isApprovedForAll', values: [AddressLike, AddressLike]): string;
-encodeFunctionData(functionFragment: 'isAuthority', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'isLocked', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'lock', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'lockFee', values?: undefined): string;
@@ -26,7 +23,6 @@ encodeFunctionData(functionFragment: 'maxProofAge', values?: undefined): string;
 encodeFunctionData(functionFragment: 'name', values?: undefined): string;
 encodeFunctionData(functionFragment: 'owner', values?: undefined): string;
 encodeFunctionData(functionFragment: 'ownerOf', values: [BigNumberish]): string;
-encodeFunctionData(functionFragment: 'registeredAuthorities', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string;
 encodeFunctionData(functionFragment: 'safeTransferFrom(address,address,uint256)', values: [AddressLike, AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'safeTransferFrom(address,address,uint256,bytes)', values: [AddressLike, AddressLike, BigNumberish, BytesLike]): string;
@@ -40,14 +36,11 @@ encodeFunctionData(functionFragment: 'unlock', values: [BigNumberish, BigNumberi
 encodeFunctionData(functionFragment: 'unlockFee', values?: undefined): string;
 
     decodeFunctionResult(functionFragment: 'approve', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'authorities', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'authoritiesBaseURIs', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'authority', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'authorityBaseURI', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getApproved', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'getAuthorities', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'getAuthorityBaseURI', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'isApprovedForAll', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'isAuthority', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'isLocked', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'lock', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'lockFee', data: BytesLike): Result;
@@ -55,7 +48,6 @@ decodeFunctionResult(functionFragment: 'maxProofAge', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'ownerOf', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'registeredAuthorities', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'safeTransferFrom(address,address,uint256)', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'safeTransferFrom(address,address,uint256,bytes)', data: BytesLike): Result;
@@ -70,18 +62,6 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
   }
 
   
-    export namespace AddAuthorityEvent {
-      export type InputTuple = [account: AddressLike, _authorityBaseURI: string];
-      export type OutputTuple = [account: string, _authorityBaseURI: string];
-      export interface OutputObject {account: string, _authorityBaseURI: string };
-      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
-      export type Filter = TypedDeferredTopicFilter<Event>
-      export type Log = TypedEventLog<Event>
-      export type LogDescription = TypedLogDescription<Event>
-    }
-
-  
-
     export namespace ApprovalEvent {
       export type InputTuple = [owner: AddressLike, approved: AddressLike, tokenId: BigNumberish];
       export type OutputTuple = [owner: string, approved: string, tokenId: bigint];
@@ -98,6 +78,18 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
       export type InputTuple = [owner: AddressLike, operator: AddressLike, approved: boolean];
       export type OutputTuple = [owner: string, operator: string, approved: boolean];
       export interface OutputObject {owner: string, operator: string, approved: boolean };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace AuthorityUpdatedEvent {
+      export type InputTuple = [authority: AddressLike, baseURI: string];
+      export type OutputTuple = [authority: string, baseURI: string];
+      export interface OutputObject {authority: string, baseURI: string };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -143,9 +135,9 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
   
 
     export namespace MintEvent {
-      export type InputTuple = [id: BigNumberish, _to: AddressLike, _locked: boolean, _tokenURI: string];
-      export type OutputTuple = [id: bigint, _to: string, _locked: boolean, _tokenURI: string];
-      export interface OutputObject {id: bigint, _to: string, _locked: boolean, _tokenURI: string };
+      export type InputTuple = [id: BigNumberish, _to: AddressLike, _locked: boolean];
+      export type OutputTuple = [id: bigint, _to: string, _locked: boolean];
+      export interface OutputObject {id: bigint, _to: string, _locked: boolean };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -158,18 +150,6 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
       export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
       export type OutputTuple = [previousOwner: string, newOwner: string];
       export interface OutputObject {previousOwner: string, newOwner: string };
-      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
-      export type Filter = TypedDeferredTopicFilter<Event>
-      export type Log = TypedEventLog<Event>
-      export type LogDescription = TypedLogDescription<Event>
-    }
-
-  
-
-    export namespace RemoveAuthorityEvent {
-      export type InputTuple = [account: AddressLike];
-      export type OutputTuple = [account: string];
-      export interface OutputObject {account: string };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -256,16 +236,16 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
     
 
     
-    authorities: TypedContractMethod<
-      [arg0: AddressLike, ],
-      [boolean],
+    authority: TypedContractMethod<
+      [],
+      [string],
       'view'
     >
     
 
     
-    authoritiesBaseURIs: TypedContractMethod<
-      [arg0: AddressLike, ],
+    authorityBaseURI: TypedContractMethod<
+      [],
       [string],
       'view'
     >
@@ -288,32 +268,8 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
     
 
     
-    getAuthorities: TypedContractMethod<
-      [],
-      [[string[], string[]]],
-      'view'
-    >
-    
-
-    
-    getAuthorityBaseURI: TypedContractMethod<
-      [account: AddressLike, ],
-      [string],
-      'view'
-    >
-    
-
-    
     isApprovedForAll: TypedContractMethod<
       [owner: AddressLike, operator: AddressLike, ],
-      [boolean],
-      'view'
-    >
-    
-
-    
-    isAuthority: TypedContractMethod<
-      [account: AddressLike, ],
       [boolean],
       'view'
     >
@@ -370,14 +326,6 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
     
     ownerOf: TypedContractMethod<
       [tokenId: BigNumberish, ],
-      [string],
-      'view'
-    >
-    
-
-    
-    registeredAuthorities: TypedContractMethod<
-      [arg0: BigNumberish, ],
       [string],
       'view'
     >
@@ -479,13 +427,13 @@ decodeFunctionResult(functionFragment: 'unlockFee', data: BytesLike): Result;
       [void],
       'nonpayable'
     >;
-getFunction(nameOrSignature: 'authorities'): TypedContractMethod<
-      [arg0: AddressLike, ],
-      [boolean],
+getFunction(nameOrSignature: 'authority'): TypedContractMethod<
+      [],
+      [string],
       'view'
     >;
-getFunction(nameOrSignature: 'authoritiesBaseURIs'): TypedContractMethod<
-      [arg0: AddressLike, ],
+getFunction(nameOrSignature: 'authorityBaseURI'): TypedContractMethod<
+      [],
       [string],
       'view'
     >;
@@ -499,23 +447,8 @@ getFunction(nameOrSignature: 'getApproved'): TypedContractMethod<
       [string],
       'view'
     >;
-getFunction(nameOrSignature: 'getAuthorities'): TypedContractMethod<
-      [],
-      [[string[], string[]]],
-      'view'
-    >;
-getFunction(nameOrSignature: 'getAuthorityBaseURI'): TypedContractMethod<
-      [account: AddressLike, ],
-      [string],
-      'view'
-    >;
 getFunction(nameOrSignature: 'isApprovedForAll'): TypedContractMethod<
       [owner: AddressLike, operator: AddressLike, ],
-      [boolean],
-      'view'
-    >;
-getFunction(nameOrSignature: 'isAuthority'): TypedContractMethod<
-      [account: AddressLike, ],
       [boolean],
       'view'
     >;
@@ -551,11 +484,6 @@ getFunction(nameOrSignature: 'owner'): TypedContractMethod<
     >;
 getFunction(nameOrSignature: 'ownerOf'): TypedContractMethod<
       [tokenId: BigNumberish, ],
-      [string],
-      'view'
-    >;
-getFunction(nameOrSignature: 'registeredAuthorities'): TypedContractMethod<
-      [arg0: BigNumberish, ],
       [string],
       'view'
     >;
@@ -615,31 +543,30 @@ getFunction(nameOrSignature: 'unlockFee'): TypedContractMethod<
       'view'
     >;
 
-    getEvent(key: 'AddAuthority'): TypedContractEvent<AddAuthorityEvent.InputTuple, AddAuthorityEvent.OutputTuple, AddAuthorityEvent.OutputObject>;
-getEvent(key: 'Approval'): TypedContractEvent<ApprovalEvent.InputTuple, ApprovalEvent.OutputTuple, ApprovalEvent.OutputObject>;
+    getEvent(key: 'Approval'): TypedContractEvent<ApprovalEvent.InputTuple, ApprovalEvent.OutputTuple, ApprovalEvent.OutputObject>;
 getEvent(key: 'ApprovalForAll'): TypedContractEvent<ApprovalForAllEvent.InputTuple, ApprovalForAllEvent.OutputTuple, ApprovalForAllEvent.OutputObject>;
+getEvent(key: 'AuthorityUpdated'): TypedContractEvent<AuthorityUpdatedEvent.InputTuple, AuthorityUpdatedEvent.OutputTuple, AuthorityUpdatedEvent.OutputObject>;
 getEvent(key: 'Lock'): TypedContractEvent<LockEvent.InputTuple, LockEvent.OutputTuple, LockEvent.OutputObject>;
 getEvent(key: 'LockFeeUpdated'): TypedContractEvent<LockFeeUpdatedEvent.InputTuple, LockFeeUpdatedEvent.OutputTuple, LockFeeUpdatedEvent.OutputObject>;
 getEvent(key: 'MaxProofAgeUpdated'): TypedContractEvent<MaxProofAgeUpdatedEvent.InputTuple, MaxProofAgeUpdatedEvent.OutputTuple, MaxProofAgeUpdatedEvent.OutputObject>;
 getEvent(key: 'Mint'): TypedContractEvent<MintEvent.InputTuple, MintEvent.OutputTuple, MintEvent.OutputObject>;
 getEvent(key: 'OwnershipTransferred'): TypedContractEvent<OwnershipTransferredEvent.InputTuple, OwnershipTransferredEvent.OutputTuple, OwnershipTransferredEvent.OutputObject>;
-getEvent(key: 'RemoveAuthority'): TypedContractEvent<RemoveAuthorityEvent.InputTuple, RemoveAuthorityEvent.OutputTuple, RemoveAuthorityEvent.OutputObject>;
 getEvent(key: 'Transfer'): TypedContractEvent<TransferEvent.InputTuple, TransferEvent.OutputTuple, TransferEvent.OutputObject>;
 getEvent(key: 'Unlock'): TypedContractEvent<UnlockEvent.InputTuple, UnlockEvent.OutputTuple, UnlockEvent.OutputObject>;
 getEvent(key: 'UnlockFeeUpdated'): TypedContractEvent<UnlockFeeUpdatedEvent.InputTuple, UnlockFeeUpdatedEvent.OutputTuple, UnlockFeeUpdatedEvent.OutputObject>;
 
     filters: {
       
-      'AddAuthority(address,string)': TypedContractEvent<AddAuthorityEvent.InputTuple, AddAuthorityEvent.OutputTuple, AddAuthorityEvent.OutputObject>;
-      AddAuthority: TypedContractEvent<AddAuthorityEvent.InputTuple, AddAuthorityEvent.OutputTuple, AddAuthorityEvent.OutputObject>;
-    
-
       'Approval(address,address,uint256)': TypedContractEvent<ApprovalEvent.InputTuple, ApprovalEvent.OutputTuple, ApprovalEvent.OutputObject>;
       Approval: TypedContractEvent<ApprovalEvent.InputTuple, ApprovalEvent.OutputTuple, ApprovalEvent.OutputObject>;
     
 
       'ApprovalForAll(address,address,bool)': TypedContractEvent<ApprovalForAllEvent.InputTuple, ApprovalForAllEvent.OutputTuple, ApprovalForAllEvent.OutputObject>;
       ApprovalForAll: TypedContractEvent<ApprovalForAllEvent.InputTuple, ApprovalForAllEvent.OutputTuple, ApprovalForAllEvent.OutputObject>;
+    
+
+      'AuthorityUpdated(address,string)': TypedContractEvent<AuthorityUpdatedEvent.InputTuple, AuthorityUpdatedEvent.OutputTuple, AuthorityUpdatedEvent.OutputObject>;
+      AuthorityUpdated: TypedContractEvent<AuthorityUpdatedEvent.InputTuple, AuthorityUpdatedEvent.OutputTuple, AuthorityUpdatedEvent.OutputObject>;
     
 
       'Lock(uint256)': TypedContractEvent<LockEvent.InputTuple, LockEvent.OutputTuple, LockEvent.OutputObject>;
@@ -654,16 +581,12 @@ getEvent(key: 'UnlockFeeUpdated'): TypedContractEvent<UnlockFeeUpdatedEvent.Inpu
       MaxProofAgeUpdated: TypedContractEvent<MaxProofAgeUpdatedEvent.InputTuple, MaxProofAgeUpdatedEvent.OutputTuple, MaxProofAgeUpdatedEvent.OutputObject>;
     
 
-      'Mint(uint256,address,bool,string)': TypedContractEvent<MintEvent.InputTuple, MintEvent.OutputTuple, MintEvent.OutputObject>;
+      'Mint(uint256,address,bool)': TypedContractEvent<MintEvent.InputTuple, MintEvent.OutputTuple, MintEvent.OutputObject>;
       Mint: TypedContractEvent<MintEvent.InputTuple, MintEvent.OutputTuple, MintEvent.OutputObject>;
     
 
       'OwnershipTransferred(address,address)': TypedContractEvent<OwnershipTransferredEvent.InputTuple, OwnershipTransferredEvent.OutputTuple, OwnershipTransferredEvent.OutputObject>;
       OwnershipTransferred: TypedContractEvent<OwnershipTransferredEvent.InputTuple, OwnershipTransferredEvent.OutputTuple, OwnershipTransferredEvent.OutputObject>;
-    
-
-      'RemoveAuthority(address)': TypedContractEvent<RemoveAuthorityEvent.InputTuple, RemoveAuthorityEvent.OutputTuple, RemoveAuthorityEvent.OutputObject>;
-      RemoveAuthority: TypedContractEvent<RemoveAuthorityEvent.InputTuple, RemoveAuthorityEvent.OutputTuple, RemoveAuthorityEvent.OutputObject>;
     
 
       'Transfer(address,address,uint256)': TypedContractEvent<TransferEvent.InputTuple, TransferEvent.OutputTuple, TransferEvent.OutputObject>;

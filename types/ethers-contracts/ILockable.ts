@@ -6,24 +6,18 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
   
 
   export interface ILockableInterface extends Interface {
-    getFunction(nameOrSignature: "getAuthorities" | "getAuthorityBaseURI" | "isAuthority" | "isLocked" | "lock" | "ownerOf" | "tokenURI" | "transferFrom" | "unlock"): FunctionFragment;
+    getFunction(nameOrSignature: "isLocked" | "lock" | "ownerOf" | "tokenURI" | "transferFrom" | "unlock"): FunctionFragment;
 
-    getEvent(nameOrSignatureOrTopic: "AddAuthority" | "Lock" | "Mint" | "RemoveAuthority" | "Unlock"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "AuthorityUpdated" | "Lock" | "Mint" | "Unlock"): EventFragment;
 
-    encodeFunctionData(functionFragment: 'getAuthorities', values?: undefined): string;
-encodeFunctionData(functionFragment: 'getAuthorityBaseURI', values: [AddressLike]): string;
-encodeFunctionData(functionFragment: 'isAuthority', values: [AddressLike]): string;
-encodeFunctionData(functionFragment: 'isLocked', values: [BigNumberish]): string;
+    encodeFunctionData(functionFragment: 'isLocked', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'lock', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'ownerOf', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'tokenURI', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'transferFrom', values: [AddressLike, AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'unlock', values: [BigNumberish, BigNumberish, BytesLike]): string;
 
-    decodeFunctionResult(functionFragment: 'getAuthorities', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'getAuthorityBaseURI', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'isAuthority', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'isLocked', data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: 'isLocked', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'lock', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'ownerOf', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'tokenURI', data: BytesLike): Result;
@@ -32,10 +26,10 @@ decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result;
   }
 
   
-    export namespace AddAuthorityEvent {
-      export type InputTuple = [account: AddressLike, _authorityBaseURI: string];
-      export type OutputTuple = [account: string, _authorityBaseURI: string];
-      export interface OutputObject {account: string, _authorityBaseURI: string };
+    export namespace AuthorityUpdatedEvent {
+      export type InputTuple = [authority: AddressLike, baseURI: string];
+      export type OutputTuple = [authority: string, baseURI: string];
+      export interface OutputObject {authority: string, baseURI: string };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -57,21 +51,9 @@ decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result;
   
 
     export namespace MintEvent {
-      export type InputTuple = [id: BigNumberish, _to: AddressLike, _locked: boolean, _tokenURI: string];
-      export type OutputTuple = [id: bigint, _to: string, _locked: boolean, _tokenURI: string];
-      export interface OutputObject {id: bigint, _to: string, _locked: boolean, _tokenURI: string };
-      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
-      export type Filter = TypedDeferredTopicFilter<Event>
-      export type Log = TypedEventLog<Event>
-      export type LogDescription = TypedLogDescription<Event>
-    }
-
-  
-
-    export namespace RemoveAuthorityEvent {
-      export type InputTuple = [account: AddressLike];
-      export type OutputTuple = [account: string];
-      export interface OutputObject {account: string };
+      export type InputTuple = [id: BigNumberish, _to: AddressLike, _locked: boolean];
+      export type OutputTuple = [id: bigint, _to: string, _locked: boolean];
+      export interface OutputObject {id: bigint, _to: string, _locked: boolean };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -126,30 +108,6 @@ decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result;
 
     
     
-    getAuthorities: TypedContractMethod<
-      [],
-      [[string[], string[]]],
-      'view'
-    >
-    
-
-    
-    getAuthorityBaseURI: TypedContractMethod<
-      [account: AddressLike, ],
-      [string],
-      'view'
-    >
-    
-
-    
-    isAuthority: TypedContractMethod<
-      [account: AddressLike, ],
-      [boolean],
-      'view'
-    >
-    
-
-    
     isLocked: TypedContractMethod<
       [tokenId: BigNumberish, ],
       [boolean],
@@ -200,22 +158,7 @@ decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result;
 
     getFunction<T extends ContractMethod = ContractMethod>(key: string | FunctionFragment): T;
 
-    getFunction(nameOrSignature: 'getAuthorities'): TypedContractMethod<
-      [],
-      [[string[], string[]]],
-      'view'
-    >;
-getFunction(nameOrSignature: 'getAuthorityBaseURI'): TypedContractMethod<
-      [account: AddressLike, ],
-      [string],
-      'view'
-    >;
-getFunction(nameOrSignature: 'isAuthority'): TypedContractMethod<
-      [account: AddressLike, ],
-      [boolean],
-      'view'
-    >;
-getFunction(nameOrSignature: 'isLocked'): TypedContractMethod<
+    getFunction(nameOrSignature: 'isLocked'): TypedContractMethod<
       [tokenId: BigNumberish, ],
       [boolean],
       'view'
@@ -246,28 +189,23 @@ getFunction(nameOrSignature: 'unlock'): TypedContractMethod<
       'payable'
     >;
 
-    getEvent(key: 'AddAuthority'): TypedContractEvent<AddAuthorityEvent.InputTuple, AddAuthorityEvent.OutputTuple, AddAuthorityEvent.OutputObject>;
+    getEvent(key: 'AuthorityUpdated'): TypedContractEvent<AuthorityUpdatedEvent.InputTuple, AuthorityUpdatedEvent.OutputTuple, AuthorityUpdatedEvent.OutputObject>;
 getEvent(key: 'Lock'): TypedContractEvent<LockEvent.InputTuple, LockEvent.OutputTuple, LockEvent.OutputObject>;
 getEvent(key: 'Mint'): TypedContractEvent<MintEvent.InputTuple, MintEvent.OutputTuple, MintEvent.OutputObject>;
-getEvent(key: 'RemoveAuthority'): TypedContractEvent<RemoveAuthorityEvent.InputTuple, RemoveAuthorityEvent.OutputTuple, RemoveAuthorityEvent.OutputObject>;
 getEvent(key: 'Unlock'): TypedContractEvent<UnlockEvent.InputTuple, UnlockEvent.OutputTuple, UnlockEvent.OutputObject>;
 
     filters: {
       
-      'AddAuthority(address,string)': TypedContractEvent<AddAuthorityEvent.InputTuple, AddAuthorityEvent.OutputTuple, AddAuthorityEvent.OutputObject>;
-      AddAuthority: TypedContractEvent<AddAuthorityEvent.InputTuple, AddAuthorityEvent.OutputTuple, AddAuthorityEvent.OutputObject>;
+      'AuthorityUpdated(address,string)': TypedContractEvent<AuthorityUpdatedEvent.InputTuple, AuthorityUpdatedEvent.OutputTuple, AuthorityUpdatedEvent.OutputObject>;
+      AuthorityUpdated: TypedContractEvent<AuthorityUpdatedEvent.InputTuple, AuthorityUpdatedEvent.OutputTuple, AuthorityUpdatedEvent.OutputObject>;
     
 
       'Lock(uint256)': TypedContractEvent<LockEvent.InputTuple, LockEvent.OutputTuple, LockEvent.OutputObject>;
       Lock: TypedContractEvent<LockEvent.InputTuple, LockEvent.OutputTuple, LockEvent.OutputObject>;
     
 
-      'Mint(uint256,address,bool,string)': TypedContractEvent<MintEvent.InputTuple, MintEvent.OutputTuple, MintEvent.OutputObject>;
+      'Mint(uint256,address,bool)': TypedContractEvent<MintEvent.InputTuple, MintEvent.OutputTuple, MintEvent.OutputObject>;
       Mint: TypedContractEvent<MintEvent.InputTuple, MintEvent.OutputTuple, MintEvent.OutputObject>;
-    
-
-      'RemoveAuthority(address)': TypedContractEvent<RemoveAuthorityEvent.InputTuple, RemoveAuthorityEvent.OutputTuple, RemoveAuthorityEvent.OutputObject>;
-      RemoveAuthority: TypedContractEvent<RemoveAuthorityEvent.InputTuple, RemoveAuthorityEvent.OutputTuple, RemoveAuthorityEvent.OutputObject>;
     
 
       'Unlock(uint256)': TypedContractEvent<UnlockEvent.InputTuple, UnlockEvent.OutputTuple, UnlockEvent.OutputObject>;

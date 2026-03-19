@@ -3,16 +3,15 @@ pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./libraries/Verify.sol";
 import "./ILockable.sol";
 
 abstract contract LockableNFT is ERC721, ILockable, Ownable {
-    using Verify for mapping(address => bool);
 
     error SendingEthToSafeFailed();
     error TokenLocked(uint256 _tokenId);
     error TokenNotLocked(uint256 _tokenId);
-    error AddressIsNotAuthority(address account);
     error UnlockVerificationFailed(uint256 tokenId, bytes proof);
     error IncorrectUnlockFee(uint256 unlockFee, uint256 msgValue);
     error IncorrectLockFee(uint256 lockFee, uint256 msgValue);
@@ -25,12 +24,9 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
     event MaxProofAgeUpdated(uint256 maxProofAge);
 
     mapping(uint256 => bool) internal lockedTokens;
-    mapping(uint256 => string) internal tokenURIs;
 
-    address[] public registeredAuthorities;
-    mapping(address => uint256) private authorityIndex;
-    mapping(address => bool) public authorities;
-    mapping(address => string) public authoritiesBaseURIs;
+    address public authority;
+    string public authorityBaseURI;
     uint256 public unlockFee;
     uint256 public lockFee;
     uint256 public maxProofAge;
@@ -47,17 +43,19 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
         string memory _authorityBaseURI,
         uint256 _maxProofAge
     ) ERC721(_name, _symbol) Ownable(msg.sender) {
-        _addAuthority(_authority, _authorityBaseURI);
+        _setAuthority(_authority, _authorityBaseURI);
         _setMaxProofAge(_maxProofAge);
     }
 
     function tokenURI(uint256 tokenId) public view virtual override(ERC721, ILockable) returns (string memory) {
         _requireOwned(tokenId);
-        return tokenURIs[tokenId];
+        return string.concat(authorityBaseURI, Strings.toString(tokenId));
     }
 
-    function _setTokenURI(uint256 _tokenId, string memory _tokenURI) internal {
-        tokenURIs[_tokenId] = _tokenURI;
+    function _setAuthority(address _authority, string memory _authorityBaseURI) internal {
+        authority = _authority;
+        authorityBaseURI = _authorityBaseURI;
+        emit AuthorityUpdated(_authority, _authorityBaseURI);
     }
 
     function _setUnlockFee(uint256 _fee) internal {
@@ -92,17 +90,13 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
         emit Lock(tokenId);
     }
 
-    function _isUnlockProofValid(uint256 tokenId, uint256 blockNumber, bytes memory proof) internal view returns (bool) {
-        bytes32 challenge = keccak256(abi.encodePacked(block.chainid, address(this), blockhash(blockNumber), tokenId));
-        return authorities.verify(challenge, proof);
-    }
-
     function unlock(uint256 tokenId, uint256 blockNumber, bytes memory proof) external payable {
         if (ownerOf(tokenId) != msg.sender) revert NotTokenOwner(msg.sender);
         if (!_isLocked(tokenId)) revert TokenNotLocked(tokenId);
-        if (blockNumber >= block.number || block.number - blockNumber > maxProofAge) revert ProofExpired(blockNumber);
-        if (!_isUnlockProofValid(tokenId, blockNumber, proof)) revert UnlockVerificationFailed(tokenId, proof);
         if (msg.value != unlockFee) revert IncorrectUnlockFee(unlockFee, msg.value);
+        if (blockNumber >= block.number || block.number - blockNumber > maxProofAge) revert ProofExpired(blockNumber);
+        bytes32 challenge = keccak256(abi.encodePacked(block.chainid, address(this), blockhash(blockNumber), tokenId));
+        if (!Verify.verify(authority, challenge, proof)) revert UnlockVerificationFailed(tokenId, proof);
         delete lockedTokens[tokenId];
         emit Unlock(tokenId);
     }
@@ -113,52 +107,6 @@ abstract contract LockableNFT is ERC721, ILockable, Ownable {
 
     function _isLocked(uint256 tokenId) internal view returns (bool) {
         return lockedTokens[tokenId];
-    }
-
-    function _addAuthority(address account, string memory _authorityBaseURI) internal {
-        if (account == address(0)) revert AddressIsNotAuthority(account);
-        if (!authorities[account]) {
-            authorityIndex[account] = registeredAuthorities.length;
-            registeredAuthorities.push(account);
-            authorities[account] = true;
-        }
-        authoritiesBaseURIs[account] = _authorityBaseURI;
-        emit AddAuthority(account, _authorityBaseURI);
-    }
-
-    function _removeAuthority(address account) internal {
-        if (!authorities[account]) revert AddressIsNotAuthority(account);
-        uint256 index = authorityIndex[account];
-        uint256 lastIndex = registeredAuthorities.length - 1;
-        if (index != lastIndex) {
-            address last = registeredAuthorities[lastIndex];
-            registeredAuthorities[index] = last;
-            authorityIndex[last] = index;
-        }
-        registeredAuthorities.pop();
-        delete authorityIndex[account];
-        authorities[account] = false;
-        delete authoritiesBaseURIs[account];
-        emit RemoveAuthority(account);
-    }
-
-    function isAuthority(address account) external view returns (bool) {
-        return authorities[account];
-    }
-
-    function getAuthorityBaseURI(address account) external view returns (string memory) {
-        return authoritiesBaseURIs[account];
-    }
-
-    function getAuthorities() external view returns (address[] memory, string[] memory) {
-        uint256 len = registeredAuthorities.length;
-        address[] memory addrs = new address[](len);
-        string[] memory uris = new string[](len);
-        for (uint256 i = 0; i < len; i++) {
-            addrs[i] = registeredAuthorities[i];
-            uris[i] = authoritiesBaseURIs[registeredAuthorities[i]];
-        }
-        return (addrs, uris);
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public virtual override(ERC721, ILockable) {

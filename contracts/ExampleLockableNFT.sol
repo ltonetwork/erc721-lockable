@@ -14,25 +14,15 @@ contract ExampleLockableNFT is LockableNFT {
         uint256 _maxProofAge
     ) LockableNFT(_name, _symbol, _authority, _authorityBaseURI, _maxProofAge) {}
 
-    function mint(address _to, bool _locked, string memory _tokenURI) external onlyOwner {
+    function mint(address _to, bool _locked) external onlyOwner {
         uint256 id = ++_tokenIds;
         _safeMint(_to, id);
         if (_locked) _lock(id);
-        tokenURIs[id] = _tokenURI;
-        emit Mint(id, _to, _locked, _tokenURI);
+        emit Mint(id, _to, _locked);
     }
 
-    function setTokenURI(uint256 _tokenId, string memory _tokenURI) external {
-        if (ownerOf(_tokenId) != msg.sender) revert NotTokenOwner(msg.sender);
-        _setTokenURI(_tokenId, _tokenURI);
-    }
-
-    function addAuthority(address _account, string memory _authorityBaseURI) external onlyOwner {
-        _addAuthority(_account, _authorityBaseURI);
-    }
-
-    function removeAuthority(address _account) external onlyOwner {
-        _removeAuthority(_account);
+    function setAuthority(address _authority, string memory _authorityBaseURI) external onlyOwner {
+        _setAuthority(_authority, _authorityBaseURI);
     }
 
     function setLockFee(uint256 _fee) external onlyOwner {
@@ -49,9 +39,5 @@ contract ExampleLockableNFT is LockableNFT {
 
     function getEther() external onlyOwner {
         _getEther();
-    }
-
-    function isUnlockProofValid(uint256 tokenId, uint256 blockNumber, bytes memory proof) external view returns (bool) {
-        return _isUnlockProofValid(tokenId, blockNumber, proof);
     }
 }
